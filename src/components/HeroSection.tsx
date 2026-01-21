@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Heart, Check } from "lucide-react";
 import heroImage from "@/assets/hero-living-room.jpg";
@@ -59,11 +58,9 @@ const HeroSection = () => {
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button variant="hero" size="xl" className="group" asChild>
-                <Link to="/discover">
-                  Start Matching
-                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                </Link>
+              <Button variant="hero" size="xl" className="group">
+                Start Matching
+                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               </Button>
               <Button variant="outline" size="xl">
                 Learn More
