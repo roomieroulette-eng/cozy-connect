@@ -14,7 +14,105 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          age: number | null
+          bio: string | null
+          city: string | null
+          cleanliness: string | null
+          created_at: string
+          drinking: string | null
+          gender: string | null
+          guest_policy: string | null
+          has_pets: string | null
+          housing_status: string | null
+          id: string
+          interests: string[] | null
+          lease_duration: string | null
+          max_budget: number | null
+          max_distance: number | null
+          min_budget: number | null
+          move_in_date: string | null
+          name: string | null
+          neighborhoods: string[] | null
+          noise_level: string | null
+          occupation: string | null
+          onboarding_completed: boolean | null
+          personality_type: string | null
+          pet_friendly: string | null
+          photos: string[] | null
+          sleep_schedule: string | null
+          smoking: string | null
+          updated_at: string
+          user_id: string
+          work_from_home: string | null
+        }
+        Insert: {
+          age?: number | null
+          bio?: string | null
+          city?: string | null
+          cleanliness?: string | null
+          created_at?: string
+          drinking?: string | null
+          gender?: string | null
+          guest_policy?: string | null
+          has_pets?: string | null
+          housing_status?: string | null
+          id?: string
+          interests?: string[] | null
+          lease_duration?: string | null
+          max_budget?: number | null
+          max_distance?: number | null
+          min_budget?: number | null
+          move_in_date?: string | null
+          name?: string | null
+          neighborhoods?: string[] | null
+          noise_level?: string | null
+          occupation?: string | null
+          onboarding_completed?: boolean | null
+          personality_type?: string | null
+          pet_friendly?: string | null
+          photos?: string[] | null
+          sleep_schedule?: string | null
+          smoking?: string | null
+          updated_at?: string
+          user_id: string
+          work_from_home?: string | null
+        }
+        Update: {
+          age?: number | null
+          bio?: string | null
+          city?: string | null
+          cleanliness?: string | null
+          created_at?: string
+          drinking?: string | null
+          gender?: string | null
+          guest_policy?: string | null
+          has_pets?: string | null
+          housing_status?: string | null
+          id?: string
+          interests?: string[] | null
+          lease_duration?: string | null
+          max_budget?: number | null
+          max_distance?: number | null
+          min_budget?: number | null
+          move_in_date?: string | null
+          name?: string | null
+          neighborhoods?: string[] | null
+          noise_level?: string | null
+          occupation?: string | null
+          onboarding_completed?: boolean | null
+          personality_type?: string | null
+          pet_friendly?: string | null
+          photos?: string[] | null
+          sleep_schedule?: string | null
+          smoking?: string | null
+          updated_at?: string
+          user_id?: string
+          work_from_home?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
