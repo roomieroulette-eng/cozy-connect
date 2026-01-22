@@ -2,15 +2,17 @@ import { useState, useMemo, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, ArrowLeft, Users } from "lucide-react";
+import { Home, ArrowLeft, Users, MessageCircle } from "lucide-react";
 import SwipeCard from "@/components/discovery/SwipeCard";
 import SwipeActions from "@/components/discovery/SwipeActions";
 import FilterDrawer, { FilterOptions } from "@/components/discovery/FilterDrawer";
 import MatchModal from "@/components/discovery/MatchModal";
 import { mockProfiles, Profile } from "@/data/profiles";
+import { useMatches } from "@/hooks/useMatches";
 
 const Discovery = () => {
   const navigate = useNavigate();
+  const { matches, createMatch } = useMatches();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [swipedProfiles, setSwipedProfiles] = useState<
     Array<{ profile: Profile; direction: "left" | "right" }>
@@ -99,7 +101,7 @@ const Discovery = () => {
   }, [filteredProfiles, swipedProfiles]);
 
   const handleSwipe = useCallback(
-    (direction: "left" | "right") => {
+    async (direction: "left" | "right") => {
       if (remainingProfiles.length === 0) return;
 
       const swipedProfile = remainingProfiles[0];
@@ -108,15 +110,17 @@ const Discovery = () => {
         { profile: swipedProfile, direction },
       ]);
 
-      // Simulate match (30% chance on right swipe)
+      // Simulate match (30% chance on right swipe) - in production this would check if the other user also liked
       if (direction === "right" && Math.random() > 0.7) {
+        // Create match in database (using mock profile id as user id for demo)
+        await createMatch(swipedProfile.id);
         setTimeout(() => {
           setMatchedProfile(swipedProfile);
           setShowMatch(true);
         }, 300);
       }
     },
-    [remainingProfiles]
+    [remainingProfiles, createMatch]
   );
 
   const handleUndo = useCallback(() => {
@@ -124,7 +128,7 @@ const Discovery = () => {
     setSwipedProfiles((prev) => prev.slice(0, -1));
   }, [swipedProfiles]);
 
-  const handleSuperLike = useCallback(() => {
+  const handleSuperLike = useCallback(async () => {
     if (remainingProfiles.length === 0) return;
 
     const swipedProfile = remainingProfiles[0];
@@ -133,12 +137,13 @@ const Discovery = () => {
       { profile: swipedProfile, direction: "right" },
     ]);
 
-    // Super like always matches
+    // Super like always matches - create in database
+    await createMatch(swipedProfile.id);
     setTimeout(() => {
       setMatchedProfile(swipedProfile);
       setShowMatch(true);
     }, 300);
-  }, [remainingProfiles]);
+  }, [remainingProfiles, createMatch]);
 
   const handleCloseMatch = () => {
     setShowMatch(false);
@@ -171,6 +176,20 @@ const Discovery = () => {
             </a>
 
             <FilterDrawer filters={filters} onFiltersChange={setFilters} />
+            
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/messages")}
+              className="relative"
+            >
+              <MessageCircle className="w-5 h-5" />
+              {matches.length > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-primary-foreground text-[10px] rounded-full flex items-center justify-center">
+                  {matches.length}
+                </span>
+              )}
+            </Button>
           </div>
         </div>
       </header>
@@ -259,10 +278,6 @@ const Discovery = () => {
         isOpen={showMatch}
         onClose={handleCloseMatch}
         matchedProfile={matchedProfile}
-        onSendMessage={() => {
-          handleCloseMatch();
-          // TODO: Navigate to messages
-        }}
         onKeepSwiping={handleCloseMatch}
       />
     </div>
