@@ -25,7 +25,10 @@ export function useMatches() {
   const [loading, setLoading] = useState(true);
 
   const fetchMatches = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
 
     try {
       // Get all matches where user is involved
@@ -39,6 +42,7 @@ export function useMatches() {
 
       if (!matchesData || matchesData.length === 0) {
         setMatches([]);
+        setLoading(false);
         return;
       }
 
