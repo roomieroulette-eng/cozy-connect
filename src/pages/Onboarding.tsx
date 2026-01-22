@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
 import { useToast } from "@/hooks/use-toast";
+import { getUserFriendlyError } from "@/lib/errorHandler";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Home, ArrowLeft, ArrowRight, Check } from "lucide-react";
@@ -52,7 +53,7 @@ export default function Onboarding() {
     if (error) {
       toast({
         title: "Error saving",
-        description: error.message,
+        description: getUserFriendlyError(error),
         variant: "destructive",
       });
       setSaving(false);
@@ -67,7 +68,7 @@ export default function Onboarding() {
       if (completeError) {
         toast({
           title: "Error",
-          description: completeError.message,
+          description: getUserFriendlyError(completeError),
           variant: "destructive",
         });
       } else {

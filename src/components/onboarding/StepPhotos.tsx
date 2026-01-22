@@ -3,6 +3,7 @@ import { ProfileFormData } from "@/hooks/useProfile";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { getUserFriendlyError } from "@/lib/errorHandler";
 import { Camera, Plus, X, Image as ImageIcon, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,11 +27,14 @@ export default function StepPhotos({ formData, setFormData, uploadPhoto }: StepP
 
     const file = files[0];
     
-    // Validate file type
-    if (!file.type.startsWith("image/")) {
+    // Validate file type - check both MIME type and extension
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+    const fileExtension = file.name.split('.').pop()?.toLowerCase();
+    
+    if (!file.type.startsWith("image/") || !fileExtension || !allowedExtensions.includes(fileExtension)) {
       toast({
         title: "Invalid file type",
-        description: "Please upload an image file.",
+        description: "Please upload a JPG, PNG, WebP, or GIF image.",
         variant: "destructive",
       });
       return;
@@ -46,13 +50,36 @@ export default function StepPhotos({ formData, setFormData, uploadPhoto }: StepP
       return;
     }
 
+    // Verify file is actually an image by loading it
+    const isValidImage = await new Promise<boolean>((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(img.src);
+        resolve(true);
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(img.src);
+        resolve(false);
+      };
+      img.src = URL.createObjectURL(file);
+    });
+
+    if (!isValidImage) {
+      toast({
+        title: "Invalid image",
+        description: "The file appears to be corrupted or not a valid image.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setUploading(true);
     const { error, url } = await uploadPhoto(file);
 
     if (error) {
       toast({
         title: "Upload failed",
-        description: error.message,
+        description: getUserFriendlyError(error),
         variant: "destructive",
       });
     } else if (url) {

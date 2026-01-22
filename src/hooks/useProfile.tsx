@@ -173,7 +173,14 @@ export function useProfile() {
   const uploadPhoto = async (file: File) => {
     if (!user) return { error: new Error("Not authenticated"), url: null };
 
-    const fileExt = file.name.split('.').pop();
+    const fileExt = file.name.split('.').pop()?.toLowerCase();
+    
+    // Validate extension server-side before upload
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+    if (!fileExt || !allowedExtensions.includes(fileExt)) {
+      return { error: new Error("Invalid file type"), url: null };
+    }
+    
     const fileName = `${user.id}/${Date.now()}.${fileExt}`;
 
     const { error: uploadError } = await supabase.storage
@@ -184,11 +191,16 @@ export function useProfile() {
       return { error: uploadError, url: null };
     }
 
-    const { data: { publicUrl } } = supabase.storage
+    // Use signed URL since bucket is now private
+    const { data: signedUrlData, error: signedUrlError } = await supabase.storage
       .from("profile-photos")
-      .getPublicUrl(fileName);
+      .createSignedUrl(fileName, 60 * 60 * 24 * 365); // 1 year expiry
 
-    return { error: null, url: publicUrl };
+    if (signedUrlError || !signedUrlData) {
+      return { error: signedUrlError || new Error("Failed to generate URL"), url: null };
+    }
+
+    return { error: null, url: signedUrlData.signedUrl };
   };
 
   return {
