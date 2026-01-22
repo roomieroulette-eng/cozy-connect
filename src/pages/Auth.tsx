@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { getUserFriendlyError } from "@/lib/errorHandler";
 import { Home, Mail, Lock, ArrowRight, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -30,7 +31,7 @@ export default function Auth() {
     if (error) {
       toast({
         title: "Error",
-        description: error.message,
+        description: getUserFriendlyError(error),
         variant: "destructive",
       });
     } else {
