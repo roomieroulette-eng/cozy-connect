@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Discovery from "./pages/Discovery";
+import Messages from "./pages/Messages";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
@@ -36,6 +37,14 @@ const App = () => (
               element={
                 <ProtectedRoute requireOnboarding>
                   <Discovery />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/messages" 
+              element={
+                <ProtectedRoute requireOnboarding>
+                  <Messages />
                 </ProtectedRoute>
               } 
             />

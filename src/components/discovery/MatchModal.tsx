@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Heart, MessageCircle, X } from "lucide-react";
@@ -9,7 +10,6 @@ interface MatchModalProps {
   isOpen: boolean;
   onClose: () => void;
   matchedProfile: Profile | null;
-  onSendMessage: () => void;
   onKeepSwiping: () => void;
 }
 
@@ -17,9 +17,9 @@ const MatchModal = ({
   isOpen,
   onClose,
   matchedProfile,
-  onSendMessage,
   onKeepSwiping,
 }: MatchModalProps) => {
+  const navigate = useNavigate();
   useEffect(() => {
     if (isOpen) {
       // Trigger confetti
@@ -151,7 +151,10 @@ const MatchModal = ({
                 >
                   Keep Swiping
                 </Button>
-                <Button variant="hero" onClick={onSendMessage} className="flex-1">
+                <Button variant="hero" onClick={() => {
+                  onClose();
+                  navigate("/messages");
+                }} className="flex-1">
                   <MessageCircle className="w-4 h-4 mr-2" />
                   Say Hi!
                 </Button>
