@@ -11,8 +11,8 @@ const Navbar = () => {
 
   const navLinks = [
     { label: "Discover", icon: Users, href: "/discover" },
-    { label: "Messages", icon: MessageCircle, href: "#messages" },
-    { label: "Profile", icon: User, href: "#profile" },
+    { label: "Messages", icon: MessageCircle, href: "/messages" },
+    { label: "Profile", icon: User, href: "/profile" },
   ];
 
   const handleSignOut = async () => {

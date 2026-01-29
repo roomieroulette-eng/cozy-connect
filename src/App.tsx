@@ -10,6 +10,7 @@ import Discovery from "./pages/Discovery";
 import Messages from "./pages/Messages";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,6 +46,14 @@ const App = () => (
               element={
                 <ProtectedRoute requireOnboarding>
                   <Messages />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/profile" 
+              element={
+                <ProtectedRoute requireOnboarding>
+                  <Profile />
                 </ProtectedRoute>
               } 
             />
