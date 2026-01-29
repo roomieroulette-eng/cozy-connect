@@ -177,7 +177,75 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      profile_previews: {
+        Row: {
+          age: number | null
+          bio_preview: string | null
+          city: string | null
+          cleanliness: string | null
+          drinking: string | null
+          has_pets: string | null
+          interest_count: number | null
+          max_budget: number | null
+          min_budget: number | null
+          name: string | null
+          neighborhood: string | null
+          occupation: string | null
+          onboarding_completed: boolean | null
+          personality_type: string | null
+          pet_friendly: string | null
+          primary_photo: string | null
+          sleep_schedule: string | null
+          smoking: string | null
+          user_id: string | null
+          work_from_home: string | null
+        }
+        Insert: {
+          age?: number | null
+          bio_preview?: never
+          city?: string | null
+          cleanliness?: string | null
+          drinking?: string | null
+          has_pets?: string | null
+          interest_count?: never
+          max_budget?: number | null
+          min_budget?: number | null
+          name?: string | null
+          neighborhood?: never
+          occupation?: string | null
+          onboarding_completed?: boolean | null
+          personality_type?: string | null
+          pet_friendly?: string | null
+          primary_photo?: never
+          sleep_schedule?: string | null
+          smoking?: string | null
+          user_id?: string | null
+          work_from_home?: string | null
+        }
+        Update: {
+          age?: number | null
+          bio_preview?: never
+          city?: string | null
+          cleanliness?: string | null
+          drinking?: string | null
+          has_pets?: string | null
+          interest_count?: never
+          max_budget?: number | null
+          min_budget?: number | null
+          name?: string | null
+          neighborhood?: never
+          occupation?: string | null
+          onboarding_completed?: boolean | null
+          personality_type?: string | null
+          pet_friendly?: string | null
+          primary_photo?: never
+          sleep_schedule?: string | null
+          smoking?: string | null
+          user_id?: string | null
+          work_from_home?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
