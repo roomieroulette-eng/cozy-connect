@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "@/hooks/use-toast";
 
+export const MAX_MESSAGE_LENGTH = 5000;
 export interface Message {
   id: string;
   matchId: string;
@@ -64,12 +66,24 @@ export function useMessages(matchId: string | null) {
     async (content: string) => {
       if (!matchId || !user || !content.trim()) return false;
 
+      const trimmed = content.trim();
+
+      // Validate message length
+      if (trimmed.length > MAX_MESSAGE_LENGTH) {
+        toast({
+          title: "Message too long",
+          description: `Please keep messages under ${MAX_MESSAGE_LENGTH.toLocaleString()} characters.`,
+          variant: "destructive",
+        });
+        return false;
+      }
+
       setSending(true);
       try {
         const { error } = await supabase.from("messages").insert({
           match_id: matchId,
           sender_id: user.id,
-          content: content.trim(),
+          content: trimmed,
         });
 
         if (error) throw error;
