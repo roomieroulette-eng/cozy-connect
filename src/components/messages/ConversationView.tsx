@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Match } from "@/hooks/useMatches";
-import { Message, useMessages } from "@/hooks/useMessages";
+import { Message, useMessages, MAX_MESSAGE_LENGTH } from "@/hooks/useMessages";
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -143,22 +143,30 @@ export function ConversationView({ match, onBack, onUnmatch }: ConversationViewP
 
       {/* Input */}
       <div className="p-4 border-t border-border bg-background">
-        <div className="flex items-center gap-2">
-          <Input
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Type a message..."
-            className="flex-1"
-            disabled={sending}
-          />
-          <Button
-            onClick={handleSend}
-            disabled={!newMessage.trim() || sending}
-            size="icon"
-          >
-            <Send className="h-4 w-4" />
-          </Button>
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <Input
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value.slice(0, MAX_MESSAGE_LENGTH))}
+              onKeyPress={handleKeyPress}
+              placeholder="Type a message..."
+              className="flex-1"
+              disabled={sending}
+              maxLength={MAX_MESSAGE_LENGTH}
+            />
+            <Button
+              onClick={handleSend}
+              disabled={!newMessage.trim() || sending}
+              size="icon"
+            >
+              <Send className="h-4 w-4" />
+            </Button>
+          </div>
+          {newMessage.length > MAX_MESSAGE_LENGTH * 0.9 && (
+            <span className={`text-xs text-right ${newMessage.length >= MAX_MESSAGE_LENGTH ? 'text-destructive' : 'text-muted-foreground'}`}>
+              {newMessage.length}/{MAX_MESSAGE_LENGTH}
+            </span>
+          )}
         </div>
       </div>
 
