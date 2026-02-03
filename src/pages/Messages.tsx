@@ -2,15 +2,31 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, ArrowLeft, MessageCircle } from "lucide-react";
-import { useMatches, Match } from "@/hooks/useMatches";
-import { MatchList } from "@/components/messages/MatchList";
-import { ConversationView } from "@/components/messages/ConversationView";
+import { useMockMatches, MockMatch } from "@/hooks/useMockMatches";
+import { MockMatchList } from "@/components/messages/MockMatchList";
+import { MockConversationView } from "@/components/messages/MockConversationView";
 import { cn } from "@/lib/utils";
 
 const Messages = () => {
   const navigate = useNavigate();
-  const { matches, loading, unmatch } = useMatches();
-  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
+  const { matches, loading, unmatch, sendMessage } = useMockMatches();
+  const [selectedMatch, setSelectedMatch] = useState<MockMatch | null>(null);
+
+  const handleSendMessage = (content: string) => {
+    if (selectedMatch) {
+      sendMessage(selectedMatch.id, content);
+    }
+  };
+
+  const handleUnmatch = (matchId: string) => {
+    unmatch(matchId);
+    setSelectedMatch(null);
+  };
+
+  // Keep selectedMatch in sync with matches state
+  const currentMatch = selectedMatch 
+    ? matches.find(m => m.id === selectedMatch.id) || null 
+    : null;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -50,7 +66,7 @@ const Messages = () => {
           <div
             className={cn(
               "w-full md:w-80 lg:w-96 border-r border-border flex flex-col bg-background",
-              selectedMatch && "hidden md:flex"
+              currentMatch && "hidden md:flex"
             )}
           >
             <div className="p-4 border-b border-border">
@@ -61,9 +77,9 @@ const Messages = () => {
                 {matches.length} {matches.length === 1 ? "match" : "matches"}
               </p>
             </div>
-            <MatchList
+            <MockMatchList
               matches={matches}
-              selectedMatchId={selectedMatch?.id || null}
+              selectedMatchId={currentMatch?.id || null}
               onSelectMatch={setSelectedMatch}
               loading={loading}
             />
@@ -73,14 +89,15 @@ const Messages = () => {
           <div
             className={cn(
               "flex-1 flex flex-col",
-              !selectedMatch && "hidden md:flex"
+              !currentMatch && "hidden md:flex"
             )}
           >
-            {selectedMatch ? (
-              <ConversationView
-                match={selectedMatch}
+            {currentMatch ? (
+              <MockConversationView
+                match={currentMatch}
                 onBack={() => setSelectedMatch(null)}
-                onUnmatch={unmatch}
+                onUnmatch={handleUnmatch}
+                onSendMessage={handleSendMessage}
               />
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
