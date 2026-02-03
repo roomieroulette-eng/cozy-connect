@@ -8,11 +8,11 @@ import SwipeActions from "@/components/discovery/SwipeActions";
 import FilterDrawer, { FilterOptions } from "@/components/discovery/FilterDrawer";
 import MatchModal from "@/components/discovery/MatchModal";
 import { mockProfiles, Profile } from "@/data/profiles";
-import { useMatches } from "@/hooks/useMatches";
+import { useMockMatches } from "@/hooks/useMockMatches";
 
 const Discovery = () => {
   const navigate = useNavigate();
-  const { matches, createMatch } = useMatches();
+  const { matches, createMatch } = useMockMatches();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [swipedProfiles, setSwipedProfiles] = useState<
     Array<{ profile: Profile; direction: "left" | "right" }>
@@ -101,7 +101,7 @@ const Discovery = () => {
   }, [filteredProfiles, swipedProfiles]);
 
   const handleSwipe = useCallback(
-    async (direction: "left" | "right") => {
+    (direction: "left" | "right") => {
       if (remainingProfiles.length === 0) return;
 
       const swipedProfile = remainingProfiles[0];
@@ -112,8 +112,8 @@ const Discovery = () => {
 
       // Simulate match (30% chance on right swipe) - in production this would check if the other user also liked
       if (direction === "right" && Math.random() > 0.7) {
-        // Create match in database (using mock profile id as user id for demo)
-        await createMatch(swipedProfile.id);
+        // Create mock match for demo purposes
+        createMatch(swipedProfile);
         setTimeout(() => {
           setMatchedProfile(swipedProfile);
           setShowMatch(true);
@@ -128,7 +128,7 @@ const Discovery = () => {
     setSwipedProfiles((prev) => prev.slice(0, -1));
   }, [swipedProfiles]);
 
-  const handleSuperLike = useCallback(async () => {
+  const handleSuperLike = useCallback(() => {
     if (remainingProfiles.length === 0) return;
 
     const swipedProfile = remainingProfiles[0];
@@ -137,8 +137,8 @@ const Discovery = () => {
       { profile: swipedProfile, direction: "right" },
     ]);
 
-    // Super like always matches - create in database
-    await createMatch(swipedProfile.id);
+    // Super like always matches - create mock match
+    createMatch(swipedProfile);
     setTimeout(() => {
       setMatchedProfile(swipedProfile);
       setShowMatch(true);
