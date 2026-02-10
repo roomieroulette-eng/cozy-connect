@@ -175,6 +175,33 @@ export type Database = {
         }
         Relationships: []
       }
+      swipes: {
+        Row: {
+          created_at: string
+          direction: string
+          id: string
+          is_super_like: boolean
+          swiped_id: string
+          swiper_id: string
+        }
+        Insert: {
+          created_at?: string
+          direction: string
+          id?: string
+          is_super_like?: boolean
+          swiped_id: string
+          swiper_id: string
+        }
+        Update: {
+          created_at?: string
+          direction?: string
+          id?: string
+          is_super_like?: boolean
+          swiped_id?: string
+          swiper_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       profile_previews: {
@@ -248,7 +275,7 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      check_mutual_like: { Args: { other_user_id: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
