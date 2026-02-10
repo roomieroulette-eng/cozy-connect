@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -195,6 +195,50 @@ export function useMatches() {
   useEffect(() => {
     fetchMatches();
   }, [fetchMatches]);
+
+  // Realtime subscriptions for matches and messages
+  useEffect(() => {
+    if (!user) return;
+
+    const matchChannel = supabase
+      .channel(`matches-realtime:${user.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "matches",
+        },
+        (payload) => {
+          const row = payload.new as { user1_id?: string; user2_id?: string } | undefined;
+          const oldRow = payload.old as { user1_id?: string; user2_id?: string } | undefined;
+          // Only refetch if this user is involved
+          if (
+            row?.user1_id === user.id || row?.user2_id === user.id ||
+            oldRow?.user1_id === user.id || oldRow?.user2_id === user.id
+          ) {
+            fetchMatches();
+          }
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
+        },
+        (payload) => {
+          // Refresh match list to update last message / unread counts
+          fetchMatches();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(matchChannel);
+    };
+  }, [user, fetchMatches]);
 
   return { matches, loading, fetchMatches, unmatch, createMatch };
 }

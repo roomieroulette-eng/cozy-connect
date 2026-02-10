@@ -2,31 +2,48 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, ArrowLeft, MessageCircle } from "lucide-react";
+import { useMatches, Match } from "@/hooks/useMatches";
 import { useMockMatches, MockMatch } from "@/hooks/useMockMatches";
+import { MatchList } from "@/components/messages/MatchList";
 import { MockMatchList } from "@/components/messages/MockMatchList";
+import { ConversationView } from "@/components/messages/ConversationView";
 import { MockConversationView } from "@/components/messages/MockConversationView";
 import { cn } from "@/lib/utils";
 
+type SelectedConversation =
+  | { type: "real"; match: Match }
+  | { type: "mock"; match: MockMatch };
+
 const Messages = () => {
   const navigate = useNavigate();
-  const { matches, loading, unmatch, sendMessage } = useMockMatches();
-  const [selectedMatch, setSelectedMatch] = useState<MockMatch | null>(null);
+  const { matches: realMatches, loading: realLoading, unmatch: realUnmatch } = useMatches();
+  const { matches: mockMatches, loading: mockLoading, unmatch: mockUnmatch, sendMessage: mockSendMessage } = useMockMatches();
+  const [selected, setSelected] = useState<SelectedConversation | null>(null);
 
-  const handleSendMessage = (content: string) => {
-    if (selectedMatch) {
-      sendMessage(selectedMatch.id, content);
+  const loading = realLoading || mockLoading;
+  const totalCount = realMatches.length + mockMatches.length;
+
+  // Keep selected in sync
+  const currentSelected = (() => {
+    if (!selected) return null;
+    if (selected.type === "real") {
+      const found = realMatches.find(m => m.id === selected.match.id);
+      return found ? { type: "real" as const, match: found } : null;
+    }
+    const found = mockMatches.find(m => m.id === selected.match.id);
+    return found ? { type: "mock" as const, match: found } : null;
+  })();
+
+  const handleMockSend = (content: string) => {
+    if (currentSelected?.type === "mock") {
+      mockSendMessage(currentSelected.match.id, content);
     }
   };
 
-  const handleUnmatch = (matchId: string) => {
-    unmatch(matchId);
-    setSelectedMatch(null);
+  const handleMockUnmatch = (matchId: string) => {
+    mockUnmatch(matchId);
+    setSelected(null);
   };
-
-  // Keep selectedMatch in sync with matches state
-  const currentMatch = selectedMatch 
-    ? matches.find(m => m.id === selectedMatch.id) || null 
-    : null;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -62,11 +79,11 @@ const Messages = () => {
       {/* Main Content */}
       <main className="flex-1 pt-16 flex">
         <div className="container mx-auto flex h-[calc(100vh-4rem)]">
-          {/* Match List - always visible on desktop, conditionally on mobile */}
+          {/* Match List */}
           <div
             className={cn(
               "w-full md:w-80 lg:w-96 border-r border-border flex flex-col bg-background",
-              currentMatch && "hidden md:flex"
+              currentSelected && "hidden md:flex"
             )}
           >
             <div className="p-4 border-b border-border">
@@ -74,30 +91,67 @@ const Messages = () => {
                 Your Matches
               </h1>
               <p className="text-sm text-muted-foreground">
-                {matches.length} {matches.length === 1 ? "match" : "matches"}
+                {totalCount} {totalCount === 1 ? "match" : "matches"}
               </p>
             </div>
-            <MockMatchList
-              matches={matches}
-              selectedMatchId={currentMatch?.id || null}
-              onSelectMatch={setSelectedMatch}
-              loading={loading}
-            />
+            <div className="flex-1 overflow-y-auto">
+              {/* Real Supabase matches first */}
+              {realMatches.length > 0 && (
+                <MatchList
+                  matches={realMatches}
+                  selectedMatchId={currentSelected?.type === "real" ? currentSelected.match.id : null}
+                  onSelectMatch={(match) => setSelected({ type: "real", match })}
+                  loading={false}
+                />
+              )}
+              {/* Mock matches */}
+              {mockMatches.length > 0 && (
+                <MockMatchList
+                  matches={mockMatches}
+                  selectedMatchId={currentSelected?.type === "mock" ? currentSelected.match.id : null}
+                  onSelectMatch={(match) => setSelected({ type: "mock", match })}
+                  loading={false}
+                />
+              )}
+              {/* Empty state */}
+              {!loading && totalCount === 0 && (
+                <div className="flex-1 flex flex-col items-center justify-center p-6 text-center h-full">
+                  <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                    <span className="text-2xl">💬</span>
+                  </div>
+                  <h3 className="font-medium text-foreground mb-2">No matches yet</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Start swiping to find your perfect roommate!
+                  </p>
+                </div>
+              )}
+              {loading && totalCount === 0 && (
+                <div className="flex-1 flex items-center justify-center p-6">
+                  <div className="animate-pulse text-muted-foreground">Loading matches...</div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Conversation View */}
           <div
             className={cn(
               "flex-1 flex flex-col",
-              !currentMatch && "hidden md:flex"
+              !currentSelected && "hidden md:flex"
             )}
           >
-            {currentMatch ? (
+            {currentSelected?.type === "real" ? (
+              <ConversationView
+                match={currentSelected.match}
+                onBack={() => setSelected(null)}
+                onUnmatch={realUnmatch}
+              />
+            ) : currentSelected?.type === "mock" ? (
               <MockConversationView
-                match={currentMatch}
-                onBack={() => setSelectedMatch(null)}
-                onUnmatch={handleUnmatch}
-                onSendMessage={handleSendMessage}
+                match={currentSelected.match}
+                onBack={() => setSelected(null)}
+                onUnmatch={handleMockUnmatch}
+                onSendMessage={handleMockSend}
               />
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
