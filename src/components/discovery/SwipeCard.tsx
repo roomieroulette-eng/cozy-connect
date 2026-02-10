@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import {
   MapPin,
   DollarSign,
@@ -10,17 +9,16 @@ import {
   Moon,
   Sparkles,
   Briefcase,
-  Calendar,
   ChevronLeft,
   ChevronRight,
   Users,
   Home,
   Wind,
 } from "lucide-react";
-import { Profile } from "@/data/profiles";
+import { DiscoveryProfile } from "@/hooks/useDiscoveryProfiles";
 
 interface SwipeCardProps {
-  profile: Profile;
+  profile: DiscoveryProfile;
   onSwipe: (direction: "left" | "right") => void;
   isTop: boolean;
 }
@@ -29,7 +27,6 @@ const SwipeCard = ({ profile, onSwipe, isTop }: SwipeCardProps) => {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [dragDelta, setDragDelta] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [exitX, setExitX] = useState(0);
 
   const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
@@ -82,29 +79,41 @@ const SwipeCard = ({ profile, onSwipe, isTop }: SwipeCardProps) => {
   const likeOpacity = Math.min(Math.max(dragDelta.x / 100, 0), 1);
   const nopeOpacity = Math.min(Math.max(-dragDelta.x / 100, 0), 1);
 
-  const getCleanlinessLabel = (level: string) => {
+  const getCleanlinessLabel = (level: string | null) => {
     switch (level) {
-      case "very-clean":
-        return "Very Clean";
-      case "clean":
-        return "Clean";
-      case "moderate":
-        return "Moderate";
-      default:
-        return "Relaxed";
+      case "very_clean": return "Very Clean";
+      case "clean": return "Clean";
+      case "moderate": return "Moderate";
+      case "relaxed": return "Relaxed";
+      default: return level || "Unknown";
     }
   };
 
-  const getPersonalityLabel = (type: string) => {
+  const getPersonalityLabel = (type: string | null) => {
     switch (type) {
-      case "introvert":
-        return "Introvert";
-      case "extrovert":
-        return "Extrovert";
-      default:
-        return "Ambivert";
+      case "introvert": return "Introvert";
+      case "extrovert": return "Extrovert";
+      case "ambivert": return "Ambivert";
+      default: return type || "Unknown";
     }
   };
+
+  const getSleepLabel = (schedule: string | null) => {
+    switch (schedule) {
+      case "early_bird": return "Early Bird";
+      case "night_owl": return "Night Owl";
+      case "flexible": return "Flexible";
+      default: return schedule || "Unknown";
+    }
+  };
+
+  const budgetDisplay = profile.minBudget && profile.maxBudget
+    ? `$${profile.minBudget}-$${profile.maxBudget}/mo`
+    : profile.maxBudget
+      ? `Up to $${profile.maxBudget}/mo`
+      : profile.minBudget
+        ? `From $${profile.minBudget}/mo`
+        : null;
 
   return (
     <motion.div
@@ -127,55 +136,17 @@ const SwipeCard = ({ profile, onSwipe, isTop }: SwipeCardProps) => {
       <Card variant="profile" className="h-full overflow-hidden select-none">
         {/* Image */}
         <div className="relative h-[55%] overflow-hidden">
-          <img
-            src={profile.images[currentImageIndex]}
-            alt={profile.name}
-            className="w-full h-full object-cover"
-            draggable={false}
-          />
-
-          {/* Image Navigation Dots */}
-          {profile.images.length > 1 && (
-            <div className="absolute top-4 left-0 right-0 flex justify-center gap-1">
-              {profile.images.map((_, idx) => (
-                <div
-                  key={idx}
-                  className={`h-1 rounded-full transition-all ${
-                    idx === currentImageIndex
-                      ? "w-6 bg-primary-foreground"
-                      : "w-1 bg-primary-foreground/50"
-                  }`}
-                />
-              ))}
+          {profile.primaryPhotoUrl ? (
+            <img
+              src={profile.primaryPhotoUrl}
+              alt={profile.name}
+              className="w-full h-full object-cover"
+              draggable={false}
+            />
+          ) : (
+            <div className="w-full h-full bg-muted flex items-center justify-center">
+              <Users className="w-16 h-16 text-muted-foreground" />
             </div>
-          )}
-
-          {/* Image Navigation Buttons */}
-          {profile.images.length > 1 && (
-            <>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setCurrentImageIndex((prev) =>
-                    prev > 0 ? prev - 1 : profile.images.length - 1
-                  );
-                }}
-                className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-background/50 backdrop-blur-sm flex items-center justify-center"
-              >
-                <ChevronLeft className="w-5 h-5 text-foreground" />
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setCurrentImageIndex((prev) =>
-                    prev < profile.images.length - 1 ? prev + 1 : 0
-                  );
-                }}
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-background/50 backdrop-blur-sm flex items-center justify-center"
-              >
-                <ChevronRight className="w-5 h-5 text-foreground" />
-              </button>
-            </>
           )}
 
           {/* Swipe Indicators */}
@@ -202,11 +173,6 @@ const SwipeCard = ({ profile, onSwipe, isTop }: SwipeCardProps) => {
             )}
           </AnimatePresence>
 
-          {/* Compatibility Badge */}
-          <div className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-primary text-primary-foreground text-sm font-medium">
-            {profile.compatibility}% Match
-          </div>
-
           {/* Gradient Overlay */}
           <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-card to-transparent" />
         </div>
@@ -216,74 +182,86 @@ const SwipeCard = ({ profile, onSwipe, isTop }: SwipeCardProps) => {
           {/* Name & Age */}
           <div className="flex items-center justify-between mb-2">
             <h3 className="font-serif text-2xl font-semibold text-foreground">
-              {profile.name}, {profile.age}
+              {profile.name}{profile.age ? `, ${profile.age}` : ""}
             </h3>
           </div>
 
           {/* Occupation */}
-          <div className="flex items-center gap-2 text-muted-foreground text-sm mb-3">
-            <Briefcase className="w-4 h-4" />
-            <span>{profile.occupation}</span>
-          </div>
+          {profile.occupation && (
+            <div className="flex items-center gap-2 text-muted-foreground text-sm mb-3">
+              <Briefcase className="w-4 h-4" />
+              <span>{profile.occupation}</span>
+            </div>
+          )}
 
           {/* Location & Budget Row */}
           <div className="flex flex-wrap gap-3 mb-4">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground text-sm">
-              <MapPin className="w-3.5 h-3.5" />
-              <span>{profile.neighborhood}</span>
-            </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground text-sm">
-              <DollarSign className="w-3.5 h-3.5" />
-              <span>${profile.budget}/mo</span>
-            </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground text-sm">
-              <Calendar className="w-3.5 h-3.5" />
-              <span>{profile.moveIn}</span>
-            </div>
+            {profile.neighborhood && (
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground text-sm">
+                <MapPin className="w-3.5 h-3.5" />
+                <span>{profile.neighborhood}</span>
+              </div>
+            )}
+            {budgetDisplay && (
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground text-sm">
+                <DollarSign className="w-3.5 h-3.5" />
+                <span>{budgetDisplay}</span>
+              </div>
+            )}
           </div>
 
           {/* Bio */}
-          <p className="text-foreground text-sm leading-relaxed mb-4">
-            {profile.bio}
-          </p>
+          {profile.bioPreview && (
+            <p className="text-foreground text-sm leading-relaxed mb-4">
+              {profile.bioPreview}
+            </p>
+          )}
 
-          {/* Lifestyle Icons */}
+          {/* Lifestyle Tags */}
           <div className="flex flex-wrap gap-2 mb-4">
-            {profile.traits.pets && (
+            {profile.hasPets && profile.hasPets !== "no" && (
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/20 text-accent-foreground text-xs">
                 <Dog className="w-3.5 h-3.5" />
                 <span>Has Pet</span>
               </div>
             )}
-            {profile.traits.petsOk && !profile.traits.pets && (
+            {profile.petFriendly && profile.petFriendly !== "no" && profile.hasPets === "no" && (
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/20 text-accent-foreground text-xs">
                 <Dog className="w-3.5 h-3.5" />
                 <span>Pet Friendly</span>
               </div>
             )}
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/20 text-accent-foreground text-xs">
-              <Coffee className="w-3.5 h-3.5" />
-              <span>Drinks {profile.traits.drinks}</span>
-            </div>
-            {profile.traits.smokes !== "never" && (
+            {profile.drinking && (
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/20 text-accent-foreground text-xs">
-                <Wind className="w-3.5 h-3.5" />
-                <span>Smokes {profile.traits.smokes}</span>
+                <Coffee className="w-3.5 h-3.5" />
+                <span>Drinks {profile.drinking}</span>
               </div>
             )}
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/20 text-accent-foreground text-xs">
-              <Moon className="w-3.5 h-3.5" />
-              <span>{profile.traits.nightOwl ? "Night Owl" : "Early Bird"}</span>
-            </div>
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/20 text-accent-foreground text-xs">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>{getCleanlinessLabel(profile.traits.clean)}</span>
-            </div>
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/20 text-accent-foreground text-xs">
-              <Users className="w-3.5 h-3.5" />
-              <span>{getPersonalityLabel(profile.traits.personality)}</span>
-            </div>
-            {profile.traits.workFromHome && (
+            {profile.smoking && profile.smoking !== "never" && (
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/20 text-accent-foreground text-xs">
+                <Wind className="w-3.5 h-3.5" />
+                <span>Smokes {profile.smoking}</span>
+              </div>
+            )}
+            {profile.sleepSchedule && (
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/20 text-accent-foreground text-xs">
+                <Moon className="w-3.5 h-3.5" />
+                <span>{getSleepLabel(profile.sleepSchedule)}</span>
+              </div>
+            )}
+            {profile.cleanliness && (
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/20 text-accent-foreground text-xs">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>{getCleanlinessLabel(profile.cleanliness)}</span>
+              </div>
+            )}
+            {profile.personalityType && (
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/20 text-accent-foreground text-xs">
+                <Users className="w-3.5 h-3.5" />
+                <span>{getPersonalityLabel(profile.personalityType)}</span>
+              </div>
+            )}
+            {profile.workFromHome && profile.workFromHome !== "no" && (
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/20 text-accent-foreground text-xs">
                 <Home className="w-3.5 h-3.5" />
                 <span>WFH</span>
@@ -291,17 +269,12 @@ const SwipeCard = ({ profile, onSwipe, isTop }: SwipeCardProps) => {
             )}
           </div>
 
-          {/* Interests */}
-          <div className="flex flex-wrap gap-1.5">
-            {profile.interests.map((interest) => (
-              <span
-                key={interest}
-                className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium"
-              >
-                {interest}
-              </span>
-            ))}
-          </div>
+          {/* Interest count */}
+          {profile.interestCount && profile.interestCount > 0 && (
+            <p className="text-xs text-muted-foreground">
+              {profile.interestCount} shared interest{profile.interestCount !== 1 ? "s" : ""}
+            </p>
+          )}
         </div>
       </Card>
     </motion.div>

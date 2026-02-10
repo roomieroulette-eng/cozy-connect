@@ -2,14 +2,14 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageCircle, X } from "lucide-react";
-import { Profile } from "@/data/profiles";
+import { Heart, MessageCircle, X, MapPin, DollarSign, Users } from "lucide-react";
+import { DiscoveryProfile } from "@/hooks/useDiscoveryProfiles";
 import confetti from "canvas-confetti";
 
 interface MatchModalProps {
   isOpen: boolean;
   onClose: () => void;
-  matchedProfile: Profile | null;
+  matchedProfile: DiscoveryProfile | null;
   onKeepSwiping: () => void;
 }
 
@@ -22,7 +22,6 @@ const MatchModal = ({
   const navigate = useNavigate();
   useEffect(() => {
     if (isOpen) {
-      // Trigger confetti
       const duration = 2000;
       const end = Date.now() + duration;
 
@@ -53,6 +52,14 @@ const MatchModal = ({
 
   if (!matchedProfile) return null;
 
+  const budgetDisplay = matchedProfile.minBudget && matchedProfile.maxBudget
+    ? `$${matchedProfile.minBudget}-$${matchedProfile.maxBudget}/mo`
+    : matchedProfile.maxBudget
+      ? `Up to $${matchedProfile.maxBudget}/mo`
+      : matchedProfile.minBudget
+        ? `From $${matchedProfile.minBudget}/mo`
+        : null;
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -81,7 +88,6 @@ const MatchModal = ({
 
             {/* Header */}
             <div className="relative gradient-warm py-8 px-6 text-center">
-              {/* Hearts Animation */}
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
@@ -119,20 +125,23 @@ const MatchModal = ({
                 transition={{ delay: 0.5 }}
                 className="flex items-center gap-4 p-4 rounded-2xl bg-secondary/50"
               >
-                <img
-                  src={matchedProfile.image}
-                  alt={matchedProfile.name}
-                  className="w-16 h-16 rounded-xl object-cover"
-                />
+                {matchedProfile.primaryPhotoUrl ? (
+                  <img
+                    src={matchedProfile.primaryPhotoUrl}
+                    alt={matchedProfile.name}
+                    className="w-16 h-16 rounded-xl object-cover"
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-xl bg-muted flex items-center justify-center">
+                    <Users className="w-8 h-8 text-muted-foreground" />
+                  </div>
+                )}
                 <div>
                   <h3 className="font-serif text-lg font-semibold text-foreground">
-                    {matchedProfile.name}, {matchedProfile.age}
+                    {matchedProfile.name}{matchedProfile.age ? `, ${matchedProfile.age}` : ""}
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    {matchedProfile.neighborhood} • ${matchedProfile.budget}/mo
-                  </p>
-                  <p className="text-sm text-primary font-medium mt-1">
-                    {matchedProfile.compatibility}% compatible
+                    {[matchedProfile.neighborhood, budgetDisplay].filter(Boolean).join(" • ")}
                   </p>
                 </div>
               </motion.div>
