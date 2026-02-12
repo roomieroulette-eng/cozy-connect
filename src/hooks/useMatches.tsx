@@ -83,13 +83,18 @@ export function useMatches() {
             .neq("sender_id", user.id)
             .is("read_at", null);
 
-          // Get signed URL for photo if exists
+          // Get photo URL - photos may already be signed URLs or storage paths
           let photoUrl = null;
           if (profile?.photos && profile.photos.length > 0) {
-            const { data: signedData } = await supabase.storage
-              .from("profile-photos")
-              .createSignedUrl(profile.photos[0], 60 * 60 * 24);
-            photoUrl = signedData?.signedUrl || null;
+            const photo = profile.photos[0];
+            if (photo.startsWith("http")) {
+              photoUrl = photo;
+            } else {
+              const { data: signedData } = await supabase.storage
+                .from("profile-photos")
+                .createSignedUrl(photo, 60 * 60 * 24);
+              photoUrl = signedData?.signedUrl || null;
+            }
           }
 
           return {

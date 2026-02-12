@@ -22,6 +22,7 @@ import {
 import { Send, MoreVertical, ArrowLeft, UserX } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
+import { MockProfileSheet } from "./MockProfileSheet";
 
 const MAX_MESSAGE_LENGTH = 5000;
 
@@ -40,6 +41,7 @@ export function MockConversationView({
 }: MockConversationViewProps) {
   const [newMessage, setNewMessage] = useState("");
   const [showUnmatchDialog, setShowUnmatchDialog] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -80,18 +82,24 @@ export function MockConversationView({
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <Avatar className="h-10 w-10">
-          <AvatarImage src={match.matchedProfile.image} />
-          <AvatarFallback className="bg-primary/10 text-primary">
-            {match.matchedProfile.name.charAt(0).toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex-1">
-          <h2 className="font-medium text-foreground">{match.matchedProfile.name}</h2>
-          <p className="text-xs text-muted-foreground">
-            Matched {formatDistanceToNow(new Date(match.createdAt), { addSuffix: true })}
-          </p>
-        </div>
+        <button
+          className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+          onClick={() => setShowProfile(true)}
+        >
+          <Avatar className="h-10 w-10">
+            <AvatarImage src={match.matchedProfile.image} />
+            <AvatarFallback className="bg-primary/10 text-primary">
+              {match.matchedProfile.name.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="text-left">
+            <h2 className="font-medium text-foreground">{match.matchedProfile.name}</h2>
+            <p className="text-xs text-muted-foreground">
+              Matched {formatDistanceToNow(new Date(match.createdAt), { addSuffix: true })}
+            </p>
+          </div>
+        </button>
+        <div className="flex-1" />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon">
@@ -184,6 +192,13 @@ export function MockConversationView({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Profile Sheet */}
+      <MockProfileSheet
+        open={showProfile}
+        onOpenChange={setShowProfile}
+        profile={match.matchedProfile}
+      />
     </div>
   );
 }

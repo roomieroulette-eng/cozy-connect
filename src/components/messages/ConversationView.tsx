@@ -24,6 +24,7 @@ import {
 import { Send, MoreVertical, ArrowLeft, UserX } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
+import { MatchedProfileSheet } from "./MatchedProfileSheet";
 
 interface ConversationViewProps {
   match: Match;
@@ -36,6 +37,7 @@ export function ConversationView({ match, onBack, onUnmatch }: ConversationViewP
   const { messages, loading, sending, sendMessage } = useMessages(match.id);
   const [newMessage, setNewMessage] = useState("");
   const [showUnmatchDialog, setShowUnmatchDialog] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -81,18 +83,24 @@ export function ConversationView({ match, onBack, onUnmatch }: ConversationViewP
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <Avatar className="h-10 w-10">
-          <AvatarImage src={match.matchedUserPhoto || undefined} />
-          <AvatarFallback className="bg-primary/10 text-primary">
-            {match.matchedUserName.charAt(0).toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex-1">
-          <h2 className="font-medium text-foreground">{match.matchedUserName}</h2>
-          <p className="text-xs text-muted-foreground">
-            Matched {formatDistanceToNow(new Date(match.createdAt), { addSuffix: true })}
-          </p>
-        </div>
+        <button
+          className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+          onClick={() => setShowProfile(true)}
+        >
+          <Avatar className="h-10 w-10">
+            <AvatarImage src={match.matchedUserPhoto || undefined} />
+            <AvatarFallback className="bg-primary/10 text-primary">
+              {match.matchedUserName.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="text-left">
+            <h2 className="font-medium text-foreground">{match.matchedUserName}</h2>
+            <p className="text-xs text-muted-foreground">
+              Matched {formatDistanceToNow(new Date(match.createdAt), { addSuffix: true })}
+            </p>
+          </div>
+        </button>
+        <div className="flex-1" />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon">
@@ -190,6 +198,15 @@ export function ConversationView({ match, onBack, onUnmatch }: ConversationViewP
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Profile Sheet */}
+      <MatchedProfileSheet
+        open={showProfile}
+        onOpenChange={setShowProfile}
+        userId={match.matchedUserId}
+        fallbackName={match.matchedUserName}
+        fallbackPhoto={match.matchedUserPhoto}
+      />
     </div>
   );
 }
