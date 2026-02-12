@@ -64,7 +64,7 @@ const Messages = () => {
                 <Home className="w-4 h-4 text-primary-foreground" />
               </div>
               <span className="font-serif text-lg font-semibold text-foreground">
-                RoomMatch
+                RoomieRoulette
               </span>
             </a>
 

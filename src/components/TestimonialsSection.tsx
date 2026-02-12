@@ -23,7 +23,7 @@ const TestimonialsSection = () => {
       name: "Priya K.",
       role: "Graduate Student",
       quote:
-        "As an international student, finding a trustworthy roommate was stressful. RoomMatch made it easy with verified profiles and clear preferences.",
+        "As an international student, finding a trustworthy roommate was stressful. RoomieRoulette made it easy with verified profiles and clear preferences.",
       rating: 5,
       avatar: "🙋‍♀️",
     },

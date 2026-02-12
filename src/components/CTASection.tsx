@@ -29,7 +29,7 @@ const CTASection = () => {
               {/* Subheadline */}
               <p className="text-lg text-primary-foreground/80 max-w-xl mx-auto mb-8">
                 Join thousands of people who found their ideal living situation
-                through RoomMatch. It's free to get started!
+                through RoomieRoulette. It's free to get started!
               </p>
 
               {/* CTAs */}

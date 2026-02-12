@@ -15,7 +15,7 @@ export interface MockMessage {
   createdAt: string;
 }
 
-const STORAGE_KEY = "roommatch_mock_matches";
+const STORAGE_KEY = "roomieroulette_mock_matches";
 
 export function useMockMatches() {
   const [matches, setMatches] = useState<MockMatch[]>([]);

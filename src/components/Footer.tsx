@@ -45,7 +45,7 @@ const Footer = () => {
                 <Home className="w-5 h-5 text-primary-foreground" />
               </div>
               <span className="font-serif text-xl font-semibold text-foreground">
-                RoomMatch
+                RoomieRoulette
               </span>
             </a>
             <p className="text-muted-foreground mb-6 max-w-xs">
@@ -135,7 +135,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © 2025 RoomMatch. All rights reserved.
+            © 2025 RoomieRoulette. All rights reserved.
           </p>
           <p className="text-sm text-muted-foreground">
             Made with ❤️ for better living

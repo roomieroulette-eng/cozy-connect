@@ -107,7 +107,7 @@ export default function Onboarding() {
                 <Home className="h-5 w-5 text-primary-foreground" />
               </div>
               <span className="font-serif text-xl font-bold text-foreground">
-                RoomMatch
+                RoomieRoulette
               </span>
             </div>
             

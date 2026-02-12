@@ -29,7 +29,7 @@ const Navbar = () => {
             <div className="w-10 h-10 rounded-xl gradient-warm flex items-center justify-center">
               <Home className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="font-serif text-xl font-semibold text-foreground">RoomMatch</span>
+            <span className="font-serif text-xl font-semibold text-foreground">RoomieRoulette</span>
           </Link>
 
           {/* Desktop Navigation */}
