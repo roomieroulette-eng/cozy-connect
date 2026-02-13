@@ -3,11 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   Sheet,
   SheetContent,
-  SheetHeader,
-  SheetTitle,
 } from "@/components/ui/sheet";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   MapPin,
   DollarSign,
@@ -19,6 +17,7 @@ import {
   Users,
   Home,
   Wind,
+  X,
 } from "lucide-react";
 
 interface MatchedProfile {
@@ -62,6 +61,10 @@ function getLabel(field: string, value: string | null) {
   return labelMap[field]?.[value] || value.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
 }
 
+function trimName(name: string | null | undefined): string {
+  return (name || "").trim();
+}
+
 export function MatchedProfileSheet({ open, onOpenChange, userId, fallbackName, fallbackPhoto }: MatchedProfileSheetProps) {
   const [profile, setProfile] = useState<MatchedProfile | null>(null);
   const [photoUrls, setPhotoUrls] = useState<string[]>([]);
@@ -80,7 +83,6 @@ export function MatchedProfileSheet({ open, onOpenChange, userId, fallbackName, 
 
       if (!error && data) {
         setProfile(data);
-        // Resolve photo URLs
         if (data.photos && data.photos.length > 0) {
           const urls = await Promise.all(
             data.photos.map(async (photo: string) => {
@@ -100,8 +102,10 @@ export function MatchedProfileSheet({ open, onOpenChange, userId, fallbackName, 
     fetchProfile();
   }, [open, userId]);
 
+  const displayName = trimName(profile?.name) || trimName(fallbackName);
+
   const budgetDisplay = profile?.min_budget && profile?.max_budget
-    ? `$${profile.min_budget}-$${profile.max_budget}/mo`
+    ? `$${profile.min_budget}–$${profile.max_budget}/mo`
     : profile?.max_budget
       ? `Up to $${profile.max_budget}/mo`
       : profile?.min_budget
@@ -119,98 +123,133 @@ export function MatchedProfileSheet({ open, onOpenChange, userId, fallbackName, 
     profile.work_from_home && profile.work_from_home !== "no" ? { icon: Home, label: "Works from Home" } : null,
   ].filter(Boolean) as { icon: typeof Dog; label: string | null }[] : [];
 
+  const heroPhoto = photoUrls[0] || fallbackPhoto;
+  const remainingPhotos = photoUrls.slice(1);
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="overflow-y-auto sm:max-w-lg">
-        <SheetHeader>
-          <SheetTitle className="font-serif">
-            {profile?.name || fallbackName}'s Profile
-          </SheetTitle>
-        </SheetHeader>
-
+      <SheetContent className="p-0 sm:max-w-md border-l border-border/50 overflow-hidden [&>button]:hidden">
         {loading ? (
-          <div className="flex items-center justify-center py-12">
+          <div className="flex items-center justify-center h-full">
             <div className="animate-pulse text-muted-foreground">Loading profile...</div>
           </div>
         ) : profile ? (
-          <div className="space-y-6 mt-4">
-            {/* Photos */}
-            {photoUrls.length > 0 && (
-              <div className="grid grid-cols-2 gap-2">
-                {photoUrls.map((url, i) => (
-                  <div key={i} className={`rounded-xl overflow-hidden ${i === 0 ? "col-span-2 aspect-[4/3]" : "aspect-square"}`}>
-                    <img src={url} alt={`${profile.name} photo ${i + 1}`} className="w-full h-full object-cover" />
+          <ScrollArea className="h-full">
+            {/* Hero photo with overlay info */}
+            <div className="relative">
+              {heroPhoto ? (
+                <div className="aspect-[3/4] max-h-[420px] w-full overflow-hidden">
+                  <img
+                    src={heroPhoto}
+                    alt={displayName}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="aspect-[3/4] max-h-[420px] w-full bg-muted flex items-center justify-center">
+                  <span className="text-6xl font-serif text-muted-foreground/40">
+                    {displayName.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )}
+
+              {/* Close button */}
+              <button
+                onClick={() => onOpenChange(false)}
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-background/70 backdrop-blur-sm flex items-center justify-center text-foreground hover:bg-background/90 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              {/* Gradient overlay with name */}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/80 to-transparent pt-16 pb-5 px-5">
+                <h2 className="font-serif text-2xl font-semibold text-foreground">
+                  {displayName}{profile.age ? `, ${profile.age}` : ""}
+                </h2>
+                {profile.occupation && (
+                  <div className="flex items-center gap-1.5 text-muted-foreground text-sm mt-1">
+                    <Briefcase className="w-3.5 h-3.5" />
+                    <span>{profile.occupation}</span>
                   </div>
-                ))}
+                )}
               </div>
-            )}
+            </div>
 
-            {/* Name & basics */}
-            <div>
-              <h2 className="font-serif text-2xl font-semibold text-foreground">
-                {profile.name}{profile.age ? `, ${profile.age}` : ""}
-              </h2>
-              {profile.occupation && (
-                <div className="flex items-center gap-2 text-muted-foreground text-sm mt-1">
-                  <Briefcase className="w-4 h-4" />
-                  <span>{profile.occupation}</span>
+            {/* Content */}
+            <div className="px-5 pb-8 space-y-5">
+              {/* Location & Budget pills */}
+              <div className="flex flex-wrap gap-2">
+                {profile.neighborhoods && profile.neighborhoods[0] && (
+                  <Badge variant="secondary" className="flex items-center gap-1.5 rounded-full px-3 py-1">
+                    <MapPin className="w-3 h-3" />
+                    {profile.neighborhoods[0]}{profile.city ? `, ${profile.city}` : ""}
+                  </Badge>
+                )}
+                {budgetDisplay && (
+                  <Badge variant="secondary" className="flex items-center gap-1.5 rounded-full px-3 py-1">
+                    <DollarSign className="w-3 h-3" />
+                    {budgetDisplay}
+                  </Badge>
+                )}
+              </div>
+
+              {/* Bio */}
+              {profile.bio && (
+                <div>
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">About</h3>
+                  <p className="text-sm text-foreground/80 leading-relaxed">{profile.bio}</p>
+                </div>
+              )}
+
+              {/* Lifestyle tags */}
+              {traitTags.length > 0 && (
+                <div>
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Lifestyle</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {traitTags.map((trait, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium"
+                      >
+                        <trait.icon className="w-3.5 h-3.5" />
+                        <span>{trait.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Interests */}
+              {profile.interests && profile.interests.length > 0 && (
+                <div>
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Interests</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {profile.interests.map((interest, i) => (
+                      <Badge key={i} variant="outline" className="rounded-full px-3 py-1">
+                        {interest}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* More photos */}
+              {remainingPhotos.length > 0 && (
+                <div>
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Photos</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    {remainingPhotos.map((url, i) => (
+                      <div key={i} className="aspect-square rounded-xl overflow-hidden">
+                        <img src={url} alt={`${displayName} photo ${i + 2}`} className="w-full h-full object-cover" />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
-
-            {/* Location & Budget */}
-            <div className="flex flex-wrap gap-2">
-              {profile.neighborhoods && profile.neighborhoods[0] && (
-                <Badge variant="secondary" className="flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5" />
-                  {profile.neighborhoods[0]}{profile.city ? `, ${profile.city}` : ""}
-                </Badge>
-              )}
-              {budgetDisplay && (
-                <Badge variant="secondary" className="flex items-center gap-1.5">
-                  <DollarSign className="w-3.5 h-3.5" />
-                  {budgetDisplay}
-                </Badge>
-              )}
-            </div>
-
-            {/* Bio */}
-            {profile.bio && (
-              <div>
-                <h3 className="text-sm font-medium text-foreground mb-2">About</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{profile.bio}</p>
-              </div>
-            )}
-
-            {/* Lifestyle */}
-            {traitTags.length > 0 && (
-              <div>
-                <h3 className="text-sm font-medium text-foreground mb-2">Lifestyle</h3>
-                <div className="flex flex-wrap gap-2">
-                  {traitTags.map((trait, i) => (
-                    <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent/20 text-accent-foreground text-sm">
-                      <trait.icon className="w-3.5 h-3.5" />
-                      <span>{trait.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Interests */}
-            {profile.interests && profile.interests.length > 0 && (
-              <div>
-                <h3 className="text-sm font-medium text-foreground mb-2">Interests</h3>
-                <div className="flex flex-wrap gap-2">
-                  {profile.interests.map((interest, i) => (
-                    <Badge key={i} variant="outline">{interest}</Badge>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+          </ScrollArea>
         ) : (
-          <div className="flex items-center justify-center py-12">
+          <div className="flex items-center justify-center h-full">
             <p className="text-muted-foreground">Profile not available</p>
           </div>
         )}
