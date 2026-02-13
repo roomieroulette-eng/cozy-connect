@@ -1,4 +1,5 @@
 import { Profile } from "@/data/profiles";
+import { motion } from "framer-motion";
 import {
   Sheet,
   SheetContent,
@@ -46,40 +47,54 @@ export function MockProfileSheet({ open, onOpenChange, profile }: MockProfileShe
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="p-0 sm:max-w-md border-l border-border/50 overflow-hidden [&>button]:hidden">
         <ScrollArea className="h-full">
-          {/* Hero photo with overlay */}
-          <div className="relative">
-            <div className="aspect-[3/4] max-h-[420px] w-full overflow-hidden">
-              <img
-                src={heroPhoto}
-                alt={displayName}
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            {/* Close button */}
-            <button
-              onClick={() => onOpenChange(false)}
-              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-background/70 backdrop-blur-sm flex items-center justify-center text-foreground hover:bg-background/90 transition-colors"
+            <motion.div
+              className="relative"
+              initial={{ opacity: 0, scale: 1.02 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
             >
-              <X className="w-4 h-4" />
-            </button>
+              <div className="aspect-[3/4] max-h-[420px] w-full overflow-hidden">
+                <img
+                  src={heroPhoto}
+                  alt={displayName}
+                  className="w-full h-full object-cover"
+                />
+              </div>
 
-            {/* Gradient overlay with name */}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/80 to-transparent pt-16 pb-5 px-5">
-              <h2 className="font-serif text-2xl font-semibold text-foreground">
-                {displayName}, {profile.age}
-              </h2>
-              {profile.occupation && (
-                <div className="flex items-center gap-1.5 text-muted-foreground text-sm mt-1">
-                  <Briefcase className="w-3.5 h-3.5" />
-                  <span>{profile.occupation}</span>
-                </div>
-              )}
-            </div>
-          </div>
+              {/* Close button */}
+              <button
+                onClick={() => onOpenChange(false)}
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-background/70 backdrop-blur-sm flex items-center justify-center text-foreground hover:bg-background/90 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
 
-          {/* Content */}
-          <div className="px-5 pb-8 space-y-5">
+              {/* Gradient overlay with name */}
+              <motion.div
+                className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/80 to-transparent pt-16 pb-5 px-5"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.15, ease: "easeOut" }}
+              >
+                <h2 className="font-serif text-2xl font-semibold text-foreground">
+                  {displayName}, {profile.age}
+                </h2>
+                {profile.occupation && (
+                  <div className="flex items-center gap-1.5 text-muted-foreground text-sm mt-1">
+                    <Briefcase className="w-3.5 h-3.5" />
+                    <span>{profile.occupation}</span>
+                  </div>
+                )}
+              </motion.div>
+            </motion.div>
+
+            {/* Content */}
+            <motion.div
+              className="px-5 pb-8 space-y-5"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.25, ease: "easeOut" }}
+            >
             {/* Location & Budget pills */}
             <div className="flex flex-wrap gap-2">
               <Badge variant="secondary" className="flex items-center gap-1.5 rounded-full px-3 py-1">
@@ -127,7 +142,7 @@ export function MockProfileSheet({ open, onOpenChange, profile }: MockProfileShe
                 </div>
               </div>
             )}
-          </div>
+            </motion.div>
         </ScrollArea>
       </SheetContent>
     </Sheet>

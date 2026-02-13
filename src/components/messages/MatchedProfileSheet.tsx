@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Sheet,
@@ -136,7 +137,12 @@ export function MatchedProfileSheet({ open, onOpenChange, userId, fallbackName, 
         ) : profile ? (
           <ScrollArea className="h-full">
             {/* Hero photo with overlay info */}
-            <div className="relative">
+            <motion.div
+              className="relative"
+              initial={{ opacity: 0, scale: 1.02 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+            >
               {heroPhoto ? (
                 <div className="aspect-[3/4] max-h-[420px] w-full overflow-hidden">
                   <img
@@ -162,7 +168,12 @@ export function MatchedProfileSheet({ open, onOpenChange, userId, fallbackName, 
               </button>
 
               {/* Gradient overlay with name */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/80 to-transparent pt-16 pb-5 px-5">
+              <motion.div
+                className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/80 to-transparent pt-16 pb-5 px-5"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.15, ease: "easeOut" }}
+              >
                 <h2 className="font-serif text-2xl font-semibold text-foreground">
                   {displayName}{profile.age ? `, ${profile.age}` : ""}
                 </h2>
@@ -172,11 +183,16 @@ export function MatchedProfileSheet({ open, onOpenChange, userId, fallbackName, 
                     <span>{profile.occupation}</span>
                   </div>
                 )}
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
             {/* Content */}
-            <div className="px-5 pb-8 space-y-5">
+            <motion.div
+              className="px-5 pb-8 space-y-5"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.25, ease: "easeOut" }}
+            >
               {/* Location & Budget pills */}
               <div className="flex flex-wrap gap-2">
                 {profile.neighborhoods && profile.neighborhoods[0] && (
@@ -246,7 +262,7 @@ export function MatchedProfileSheet({ open, onOpenChange, userId, fallbackName, 
                   </div>
                 </div>
               )}
-            </div>
+            </motion.div>
           </ScrollArea>
         ) : (
           <div className="flex items-center justify-center h-full">
