@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -7,8 +7,19 @@ import { NotificationBell } from "@/components/NotificationBell";
 import SwipeCard from "@/components/discovery/SwipeCard";
 import SwipeActions from "@/components/discovery/SwipeActions";
 import MatchModal from "@/components/discovery/MatchModal";
+import FilterDrawer, { FilterOptions } from "@/components/discovery/FilterDrawer";
 import { useDiscoveryProfiles, DiscoveryProfile } from "@/hooks/useDiscoveryProfiles";
 import { useMatches } from "@/hooks/useMatches";
+
+const defaultFilters: FilterOptions = {
+  budgetRange: [500, 2000],
+  neighborhoods: [],
+  petsOk: null,
+  smokingOk: null,
+  nightOwlOk: null,
+  cleanlinessLevel: null,
+  personality: null,
+};
 
 const Discovery = () => {
   const navigate = useNavigate();
@@ -19,12 +30,32 @@ const Discovery = () => {
   const [matchedProfile, setMatchedProfile] = useState<DiscoveryProfile | null>(null);
   const [showMatch, setShowMatch] = useState(false);
   const [lastSwiped, setLastSwiped] = useState<DiscoveryProfile | null>(null);
+  const [filters, setFilters] = useState<FilterOptions>(defaultFilters);
+
+  // Apply filters to profiles
+  const filteredProfiles = useMemo(() => {
+    return profiles.filter((p) => {
+      if (p.minBudget !== null && p.minBudget > filters.budgetRange[1]) return false;
+      if (p.maxBudget !== null && p.maxBudget < filters.budgetRange[0]) return false;
+      if (filters.neighborhoods.length > 0 && p.neighborhood) {
+        if (!filters.neighborhoods.some((n) => p.neighborhood?.toLowerCase().includes(n.toLowerCase()))) return false;
+      }
+      if (filters.petsOk === true && p.petFriendly && p.petFriendly.toLowerCase() === "no") return false;
+      if (filters.petsOk === false && p.hasPets && p.hasPets.toLowerCase() === "yes") return false;
+      if (filters.smokingOk === false && p.smoking && p.smoking.toLowerCase() !== "never") return false;
+      if (filters.nightOwlOk === false && p.sleepSchedule && p.sleepSchedule.toLowerCase().includes("night")) return false;
+      if (filters.nightOwlOk === true && p.sleepSchedule && p.sleepSchedule.toLowerCase().includes("early")) return false;
+      if (filters.cleanlinessLevel && p.cleanliness && p.cleanliness.toLowerCase() !== filters.cleanlinessLevel.toLowerCase()) return false;
+      if (filters.personality && p.personalityType && p.personalityType.toLowerCase() !== filters.personality.toLowerCase()) return false;
+      return true;
+    });
+  }, [profiles, filters]);
 
   const handleSwipe = useCallback(
     async (direction: "left" | "right") => {
-      if (profiles.length === 0 || swiping) return;
+      if (filteredProfiles.length === 0 || swiping) return;
 
-      const currentProfile = profiles[0];
+      const currentProfile = filteredProfiles[0];
       setLastSwiped(currentProfile);
       setSwipedCount((c) => c + 1);
       if (direction === "right") setLikesCount((c) => c + 1);
@@ -38,13 +69,13 @@ const Discovery = () => {
         }, 300);
       }
     },
-    [profiles, swiping, recordSwipe]
+    [filteredProfiles, swiping, recordSwipe]
   );
 
   const handleSuperLike = useCallback(async () => {
-    if (profiles.length === 0 || swiping) return;
+    if (filteredProfiles.length === 0 || swiping) return;
 
-    const currentProfile = profiles[0];
+    const currentProfile = filteredProfiles[0];
     setLastSwiped(currentProfile);
     setSwipedCount((c) => c + 1);
     setLikesCount((c) => c + 1);
@@ -57,14 +88,14 @@ const Discovery = () => {
         setShowMatch(true);
       }, 300);
     }
-  }, [profiles, swiping, recordSwipe]);
+  }, [filteredProfiles, swiping, recordSwipe]);
 
   const handleCloseMatch = () => {
     setShowMatch(false);
     setMatchedProfile(null);
   };
 
-  const visibleProfiles = profiles.slice(0, 2);
+  const visibleProfiles = filteredProfiles.slice(0, 2);
 
   return (
     <div className="min-h-screen bg-background">
@@ -115,12 +146,15 @@ const Discovery = () => {
           {/* Stats Bar */}
           <div className="flex items-center justify-between mb-4 text-sm">
             <span className="text-muted-foreground">
-              {profiles.length} profiles remaining
+              {filteredProfiles.length} profiles remaining
             </span>
-            <span className="flex items-center gap-1 text-primary">
-              <Users className="w-4 h-4" />
-              {likesCount} likes sent
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="flex items-center gap-1 text-primary">
+                <Users className="w-4 h-4" />
+                {likesCount} likes sent
+              </span>
+              <FilterDrawer filters={filters} onFiltersChange={setFilters} />
+            </div>
           </div>
 
           {/* Card Stack */}
