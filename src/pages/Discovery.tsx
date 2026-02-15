@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, ArrowLeft, Users, MessageCircle } from "lucide-react";
+import { NotificationBell } from "@/components/NotificationBell";
 import SwipeCard from "@/components/discovery/SwipeCard";
 import SwipeActions from "@/components/discovery/SwipeActions";
 import MatchModal from "@/components/discovery/MatchModal";
@@ -88,19 +89,22 @@ const Discovery = () => {
               </span>
             </a>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate("/messages")}
-              className="relative"
-            >
-              <MessageCircle className="w-5 h-5" />
-              {matches.length > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-primary-foreground text-[10px] rounded-full flex items-center justify-center">
-                  {matches.length}
-                </span>
-              )}
-            </Button>
+            <div className="flex items-center gap-1">
+              <NotificationBell />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate("/messages")}
+                className="relative"
+              >
+                <MessageCircle className="w-5 h-5" />
+                {matches.length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-primary-foreground text-[10px] rounded-full flex items-center justify-center">
+                    {matches.length}
+                  </span>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </header>

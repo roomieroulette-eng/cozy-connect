@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Home, Users, MessageCircle, User, Menu, X, LogOut } from "lucide-react";
+import { NotificationBell } from "@/components/NotificationBell";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -50,6 +51,7 @@ const Navbar = () => {
           <div className="hidden md:flex items-center gap-3">
             {user ? (
               <>
+                <NotificationBell />
                 <span className="text-sm text-muted-foreground">
                   {user.email}
                 </span>
