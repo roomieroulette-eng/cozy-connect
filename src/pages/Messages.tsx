@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, ArrowLeft, MessageCircle } from "lucide-react";
+import { NotificationBell } from "@/components/NotificationBell";
 import { useMatches, Match } from "@/hooks/useMatches";
 import { useMockMatches, MockMatch } from "@/hooks/useMockMatches";
 import { MatchList } from "@/components/messages/MatchList";
@@ -69,6 +70,7 @@ const Messages = () => {
             </a>
 
             <div className="flex items-center gap-2">
+              <NotificationBell />
               <MessageCircle className="w-5 h-5 text-primary" />
               <span className="text-sm font-medium text-foreground">Messages</span>
             </div>
