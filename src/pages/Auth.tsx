@@ -8,15 +8,18 @@ import { Card } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { getUserFriendlyError } from "@/lib/errorHandler";
+import { supabase } from "@/integrations/supabase/client";
 import { Home, Mail, Lock, ArrowRight, Heart, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
+  const [resetEmailSent, setResetEmailSent] = useState(false);
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -49,6 +52,23 @@ export default function Auth() {
 
     setLoading(false);
   };
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    if (error) {
+      toast({
+        title: "Error",
+        description: getUserFriendlyError(error),
+        variant: "destructive",
+      });
+    } else {
+      setResetEmailSent(true);
+    }
+    setLoading(false);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cream via-background to-warm-100 flex items-center justify-center p-4">
@@ -76,26 +96,80 @@ export default function Auth() {
           transition={{ duration: 0.5 }}
         >
           <Card className="p-8 shadow-elevated bg-card/80 backdrop-blur-sm border-border/50">
-            {emailSent ? (
+            {emailSent || resetEmailSent ? (
               <div className="text-center space-y-4">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/20 mb-2">
                   <CheckCircle className="h-8 w-8 text-accent-foreground" />
                 </div>
                 <h2 className="font-serif text-2xl font-bold text-foreground">Check Your Email</h2>
                 <p className="text-muted-foreground">
-                  We've sent a verification link to <span className="font-medium text-foreground">{email}</span>. Please click the link to confirm your account before signing in.
+                  {resetEmailSent
+                    ? <>We've sent a password reset link to <span className="font-medium text-foreground">{email}</span>. Click the link to set a new password.</>
+                    : <>We've sent a verification link to <span className="font-medium text-foreground">{email}</span>. Please click the link to confirm your account before signing in.</>
+                  }
                 </p>
                 <Button
                   variant="outline"
                   className="mt-4"
                   onClick={() => {
                     setEmailSent(false);
+                    setResetEmailSent(false);
+                    setIsForgotPassword(false);
                     setIsLogin(true);
                   }}
                 >
                   Back to Sign In
                 </Button>
               </div>
+            ) : isForgotPassword ? (
+              <>
+                <div className="text-center mb-8">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
+                    <Mail className="h-8 w-8 text-primary" />
+                  </div>
+                  <h1 className="font-serif text-2xl font-bold text-foreground mb-2">Reset Password</h1>
+                  <p className="text-muted-foreground">Enter your email and we'll send you a reset link</p>
+                </div>
+                <form onSubmit={handleForgotPassword} className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-foreground">Email</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="you@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <Button type="submit" variant="hero" size="lg" className="w-full" disabled={loading}>
+                    {loading ? (
+                      <span className="flex items-center gap-2">
+                        <div className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                        Sending...
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        Send Reset Link
+                        <ArrowRight className="h-4 w-4" />
+                      </span>
+                    )}
+                  </Button>
+                </form>
+                <div className="mt-6 text-center">
+                  <button
+                    type="button"
+                    onClick={() => setIsForgotPassword(false)}
+                    className="text-primary font-medium hover:underline"
+                  >
+                    Back to Sign In
+                  </button>
+                </div>
+              </>
             ) : (
               <>
                 {/* Header */}
@@ -132,7 +206,18 @@ export default function Auth() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="password" className="text-foreground">Password</Label>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="password" className="text-foreground">Password</Label>
+                      {isLogin && (
+                        <button
+                          type="button"
+                          onClick={() => setIsForgotPassword(true)}
+                          className="text-sm text-primary hover:underline"
+                        >
+                          Forgot password?
+                        </button>
+                      )}
+                    </div>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
