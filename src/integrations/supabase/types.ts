@@ -256,6 +256,7 @@ export type Database = {
           cleanliness: string | null
           drinking: string | null
           has_pets: string | null
+          housing_status: string | null
           interest_count: number | null
           max_budget: number | null
           min_budget: number | null
@@ -278,6 +279,7 @@ export type Database = {
           cleanliness?: string | null
           drinking?: string | null
           has_pets?: string | null
+          housing_status?: string | null
           interest_count?: never
           max_budget?: number | null
           min_budget?: number | null
@@ -300,6 +302,7 @@ export type Database = {
           cleanliness?: string | null
           drinking?: string | null
           has_pets?: string | null
+          housing_status?: string | null
           interest_count?: never
           max_budget?: number | null
           min_budget?: number | null
