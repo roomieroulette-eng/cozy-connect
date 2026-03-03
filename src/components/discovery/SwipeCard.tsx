@@ -186,6 +186,18 @@ const SwipeCard = ({ profile, onSwipe, isTop }: SwipeCardProps) => {
             </h3>
           </div>
 
+          {/* Housing Status Badge */}
+          {profile.housingStatus && (
+            <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium mb-3 ${
+              profile.housingStatus === "have_place"
+                ? "bg-primary/15 text-primary"
+                : "bg-secondary text-secondary-foreground"
+            }`}>
+              <Home className="w-3.5 h-3.5" />
+              <span>{profile.housingStatus === "have_place" ? "Has a place — looking for a roommate" : "Looking for a place"}</span>
+            </div>
+          )}
+
           {/* Occupation */}
           {profile.occupation && (
             <div className="flex items-center gap-2 text-muted-foreground text-sm mb-3">

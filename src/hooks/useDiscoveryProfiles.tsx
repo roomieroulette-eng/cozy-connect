@@ -23,6 +23,7 @@ export interface DiscoveryProfile {
   drinking: string | null;
   workFromHome: string | null;
   interestCount: number | null;
+  housingStatus: string | null;
 }
 
 export function useDiscoveryProfiles() {
@@ -96,6 +97,7 @@ export function useDiscoveryProfiles() {
         drinking: p.drinking,
         workFromHome: p.work_from_home,
         interestCount: p.interest_count,
+        housingStatus: (p as any).housing_status ?? null,
       }));
 
       setProfiles(mapped);
