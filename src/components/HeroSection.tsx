@@ -74,24 +74,7 @@ const HeroSection = () => {
             </div>
 
             {/* Social Proof */}
-            <div className="mt-10 pt-8 border-t border-border">
-              <div className="flex items-center justify-center lg:justify-start gap-6">
-                <div>
-                  <p className="text-3xl font-bold text-foreground">50K+</p>
-                  <p className="text-sm text-muted-foreground">Happy Matches</p>
-                </div>
-                <div className="w-px h-10 bg-border" />
-                <div>
-                  <p className="text-3xl font-bold text-foreground">4.9★</p>
-                  <p className="text-sm text-muted-foreground">App Rating</p>
-                </div>
-                <div className="w-px h-10 bg-border" />
-                <div>
-                  <p className="text-3xl font-bold text-foreground">120+</p>
-                  <p className="text-sm text-muted-foreground">Cities</p>
-                </div>
-              </div>
-            </div>
+           
           </div>
 
           {/* Hero Image */}
