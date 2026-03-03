@@ -146,6 +146,7 @@ export type Database = {
           photos: string[] | null
           sleep_schedule: string | null
           smoking: string | null
+          state: string | null
           updated_at: string
           user_id: string
           work_from_home: string | null
@@ -178,6 +179,7 @@ export type Database = {
           photos?: string[] | null
           sleep_schedule?: string | null
           smoking?: string | null
+          state?: string | null
           updated_at?: string
           user_id: string
           work_from_home?: string | null
@@ -210,6 +212,7 @@ export type Database = {
           photos?: string[] | null
           sleep_schedule?: string | null
           smoking?: string | null
+          state?: string | null
           updated_at?: string
           user_id?: string
           work_from_home?: string | null

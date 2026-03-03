@@ -17,8 +17,7 @@ export interface ProfileFormData {
   
   // Step 3: Location
   city: string;
-  neighborhoods: string[];
-  max_distance: number;
+  state: string;
   housing_status: string;
   
   // Step 4: Budget
@@ -53,8 +52,7 @@ const defaultFormData: ProfileFormData = {
   occupation: "",
   photos: [],
   city: "",
-  neighborhoods: [],
-  max_distance: 10,
+  state: "",
   housing_status: "",
   min_budget: null,
   max_budget: null,
@@ -109,8 +107,7 @@ export function useProfile() {
         occupation: data.occupation || "",
         photos: data.photos || [],
         city: data.city || "",
-        neighborhoods: data.neighborhoods || [],
-        max_distance: data.max_distance || 10,
+        state: data.state || "",
         housing_status: data.housing_status || "",
         min_budget: data.min_budget,
         max_budget: data.max_budget,
