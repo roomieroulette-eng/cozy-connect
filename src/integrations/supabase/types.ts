@@ -146,6 +146,7 @@ export type Database = {
           photos: string[] | null
           sleep_schedule: string | null
           smoking: string | null
+          snoozed_until: string | null
           state: string | null
           updated_at: string
           user_id: string
@@ -179,6 +180,7 @@ export type Database = {
           photos?: string[] | null
           sleep_schedule?: string | null
           smoking?: string | null
+          snoozed_until?: string | null
           state?: string | null
           updated_at?: string
           user_id: string
@@ -212,6 +214,7 @@ export type Database = {
           photos?: string[] | null
           sleep_schedule?: string | null
           smoking?: string | null
+          snoozed_until?: string | null
           state?: string | null
           updated_at?: string
           user_id?: string
@@ -269,6 +272,7 @@ export type Database = {
           primary_photo: string | null
           sleep_schedule: string | null
           smoking: string | null
+          snoozed_until: string | null
           user_id: string | null
           work_from_home: string | null
         }
@@ -292,6 +296,7 @@ export type Database = {
           primary_photo?: never
           sleep_schedule?: string | null
           smoking?: string | null
+          snoozed_until?: string | null
           user_id?: string | null
           work_from_home?: string | null
         }
@@ -315,6 +320,7 @@ export type Database = {
           primary_photo?: never
           sleep_schedule?: string | null
           smoking?: string | null
+          snoozed_until?: string | null
           user_id?: string | null
           work_from_home?: string | null
         }

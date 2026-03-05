@@ -71,9 +71,10 @@ export function useDiscoveryProfiles() {
 
       if (error) throw error;
 
-      // Filter out already-swiped profiles
+      // Filter out already-swiped and snoozed profiles
       const unswiped = (data || []).filter(
-        (p) => p.user_id && !swiped.has(p.user_id)
+        (p) => p.user_id && !swiped.has(p.user_id) &&
+          (!(p as any).snoozed_until || new Date((p as any).snoozed_until) < new Date())
       );
 
       // Map to DiscoveryProfile - primary_photo already contains full URLs from the view

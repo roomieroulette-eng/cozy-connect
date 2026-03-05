@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
@@ -24,8 +24,12 @@ import {
   FileText,
   Loader2,
   Trash2,
-  AlertTriangle
+  AlertTriangle,
+  Moon
 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 // Import reusable step components
 import StepBasicInfo from "@/components/onboarding/StepBasicInfo";
@@ -52,6 +56,8 @@ export default function Profile() {
   const [deleting, setDeleting] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [snoozed, setSnoozed] = useState(false);
+  const [snoozeDuration, setSnoozeDuration] = useState("1d");
   const { user, signOut, loading: authLoading } = useAuth();
   const { 
     profile, 
@@ -63,6 +69,15 @@ export default function Profile() {
   } = useProfile();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (profile?.snoozed_until) {
+      const until = new Date(profile.snoozed_until);
+      setSnoozed(until > new Date());
+    } else {
+      setSnoozed(false);
+    }
+  }, [profile]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -265,8 +280,66 @@ export default function Profile() {
           </motion.div>
         </Tabs>
 
+        {/* Snooze Section */}
+        <div className="mt-10 mb-6">
+          <Card className="p-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center">
+                  <Moon className="w-4 h-4 text-accent-foreground" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">Snooze profile</p>
+                  <p className="text-xs text-muted-foreground">Temporarily hide from discovery</p>
+                </div>
+              </div>
+              <Switch
+                checked={snoozed}
+                onCheckedChange={async (checked) => {
+                  setSnoozed(checked);
+                  if (checked) {
+                    const durations: Record<string, number> = { "1d": 1, "3d": 3, "7d": 7, "30d": 30 };
+                    const days = durations[snoozeDuration] || 1;
+                    const until = new Date();
+                    until.setDate(until.getDate() + days);
+                    await supabase.from("profiles").update({ snoozed_until: until.toISOString() }).eq("user_id", user!.id);
+                    toast({ title: "Profile snoozed 😴", description: `Hidden for ${days} day${days > 1 ? "s" : ""}.` });
+                  } else {
+                    await supabase.from("profiles").update({ snoozed_until: null }).eq("user_id", user!.id);
+                    toast({ title: "Welcome back! 👋", description: "Your profile is visible again." });
+                  }
+                }}
+              />
+            </div>
+            {snoozed && (
+              <div className="mt-4 flex items-center gap-3">
+                <Label className="text-xs text-muted-foreground shrink-0">Duration</Label>
+                <Select value={snoozeDuration} onValueChange={async (val) => {
+                  setSnoozeDuration(val);
+                  const durations: Record<string, number> = { "1d": 1, "3d": 3, "7d": 7, "30d": 30 };
+                  const days = durations[val] || 1;
+                  const until = new Date();
+                  until.setDate(until.getDate() + days);
+                  await supabase.from("profiles").update({ snoozed_until: until.toISOString() }).eq("user_id", user!.id);
+                  toast({ title: "Snooze updated", description: `Hidden for ${days} day${days > 1 ? "s" : ""}.` });
+                }}>
+                  <SelectTrigger className="h-8 text-xs w-28">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1d">1 day</SelectItem>
+                    <SelectItem value="3d">3 days</SelectItem>
+                    <SelectItem value="7d">1 week</SelectItem>
+                    <SelectItem value="30d">1 month</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </Card>
+        </div>
+
         {/* Account Settings */}
-        <div className="mt-12 mb-24 flex justify-center">
+        <div className="mb-24 flex justify-center">
           <AlertDialog open={showDeleteDialog} onOpenChange={(open) => {
             setShowDeleteDialog(open);
             if (!open) setDeleteConfirmText("");
