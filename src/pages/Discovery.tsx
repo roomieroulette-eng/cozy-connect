@@ -24,6 +24,8 @@ const defaultFilters: FilterOptions = {
 const Discovery = () => {
   const navigate = useNavigate();
   const { profiles, loading, swiping, recordSwipe } = useDiscoveryProfiles();
+
+  console.log("Loaded profiles:", profiles, loading, swiping, recordSwipe);
   const { matches } = useMatches();
   const [swipedCount, setSwipedCount] = useState(0);
   const [likesCount, setLikesCount] = useState(0);

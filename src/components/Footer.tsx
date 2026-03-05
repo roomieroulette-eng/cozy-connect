@@ -1,146 +1,116 @@
-import { Home, Instagram, Twitter, Facebook, Mail } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Home, Instagram, Twitter, Facebook, Mail, ArrowRight } from "lucide-react";
+
+const footerLinks = {
+  Product: [
+    { label: "Discover", href: "/discover" },
+    { label: "How It Works", href: "/#how-it-works" },
+    { label: "Help", href: "/help" },
+  ],
+  Legal: [
+    { label: "Privacy Policy", href: "/privacy" },
+    { label: "Terms of Service", href: "/terms" },
+  ],
+};
+
+const socialLinks = [
+  { icon: Instagram, href: "#", label: "Instagram" },
+  { icon: Twitter, href: "#", label: "Twitter" },
+  { icon: Facebook, href: "#", label: "Facebook" },
+  { icon: Mail, href: "mailto:hello@roomieroulette.com", label: "Email" },
+];
 
 const Footer = () => {
-  const footerLinks = {
-    product: [
-      { label: "How It Works", href: "#" },
-      { label: "Pricing", href: "#" },
-      { label: "Safety", href: "#" },
-      { label: "Mobile App", href: "#" },
-    ],
-    company: [
-      { label: "About Us", href: "#" },
-      { label: "Careers", href: "#" },
-      { label: "Blog", href: "#" },
-      { label: "Press", href: "#" },
-    ],
-    support: [
-      { label: "Help Center", href: "#" },
-      { label: "Contact Us", href: "#" },
-      { label: "Community", href: "#" },
-      { label: "Trust & Safety", href: "#" },
-    ],
-    legal: [
-      { label: "Privacy Policy", href: "#" },
-      { label: "Terms of Service", href: "#" },
-      { label: "Cookie Policy", href: "#" },
-    ],
-  };
-
-  const socialLinks = [
-    { icon: Instagram, href: "#", label: "Instagram" },
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Facebook, href: "#", label: "Facebook" },
-    { icon: Mail, href: "#", label: "Email" },
-  ];
-
   return (
-    <footer className="bg-secondary/50 border-t border-border">
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-6 gap-12">
-          {/* Brand */}
-          <div className="lg:col-span-2">
-            <a href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-xl gradient-warm flex items-center justify-center">
-                <Home className="w-5 h-5 text-primary-foreground" />
+    <footer className="bg-background border-t border-border">
+      <div className="container py-16">
+
+        {/* ── Top: brand + newsletter + links ── */}
+        <div className="grid lg:grid-cols-12 gap-12 pb-12 border-b border-border">
+
+          {/* Brand col */}
+          <div className="lg:col-span-4 flex flex-col gap-6">
+            <Link to="/" className="flex items-center gap-2.5 w-fit">
+              <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
+                <Home className="w-4 h-4 text-primary-foreground" />
               </div>
-              <span className="font-serif text-xl font-semibold text-foreground">
-                RoomieRoulette
-              </span>
-            </a>
-            <p className="text-muted-foreground mb-6 max-w-xs">
-              Finding your perfect roommate, one swipe at a time. Join the
-              community and discover compatible living partners.
+              <span className="font-serif text-xl font-semibold text-foreground">RoomieRoulette</span>
+            </Link>
+
+            <p className="text-sm text-muted-foreground leading-relaxed font-light max-w-xs">
+              Finding your perfect roommate, one swipe at a time. Join the community and discover compatible living partners.
             </p>
-            <div className="flex gap-3">
-              {socialLinks.map((social) => (
+
+            {/* Social links */}
+            <div className="flex gap-2">
+              {socialLinks.map((s) => (
                 <a
-                  key={social.label}
-                  href={social.href}
-                  aria-label={social.label}
-                  className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
+                  key={s.label}
+                  href={s.href}
+                  aria-label={s.label}
+                  className="w-9 h-9 rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary hover:bg-primary/5 transition-all duration-150"
                 >
-                  <social.icon className="w-5 h-5" />
+                  <s.icon className="w-4 h-4" />
                 </a>
               ))}
             </div>
           </div>
 
-          {/* Links */}
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">Product</h4>
-            <ul className="space-y-3">
-              {footerLinks.product.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
+          {/* Spacer */}
+          <div className="hidden lg:block lg:col-span-1" />
+
+          {/* Link columns */}
+          <div className="lg:col-span-4 grid grid-cols-2 gap-8">
+            {Object.entries(footerLinks).map(([category, links]) => (
+              <div key={category}>
+                <p className="text-xs font-medium text-foreground uppercase tracking-widest mb-4">{category}</p>
+                <ul className="space-y-3">
+                  {links.map((link) => (
+                    <li key={link.label}>
+                      <Link
+                        to={link.href}
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-150"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
 
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">Company</h4>
-            <ul className="space-y-3">
-              {footerLinks.company.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Spacer */}
+          <div className="hidden lg:block lg:col-span-1" />
 
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">Support</h4>
-            <ul className="space-y-3">
-              {footerLinks.support.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">Legal</h4>
-            <ul className="space-y-3">
-              {footerLinks.legal.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
+          {/* Newsletter */}
+          <div className="lg:col-span-2 flex flex-col gap-4">
+            <p className="text-xs font-medium text-foreground uppercase tracking-widest">Stay in the loop</p>
+            <p className="text-sm text-muted-foreground font-light leading-relaxed">
+              New roommates, features, and tips straight to your inbox.
+            </p>
+            <div className="flex flex-col gap-2">
+              <input
+                type="email"
+                placeholder="your@email.com"
+                className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-150"
+              />
+              <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity duration-150 group">
+                Subscribe
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">
-            © 2025 RoomieRoulette. All rights reserved.
+        {/* ── Bottom bar ── */}
+        <div className="pt-8 flex items-center justify-between">
+          <p className="text-xs text-muted-foreground">
+            © {new Date().getFullYear()} RoomieRoulette. All rights reserved.
           </p>
-          <p className="text-sm text-muted-foreground">
-            Made with ❤️ for better living
-          </p>
+          <p className="text-xs text-muted-foreground">Made with ♥ for better living</p>
         </div>
+
       </div>
     </footer>
   );
