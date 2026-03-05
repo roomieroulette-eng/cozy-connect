@@ -42,7 +42,7 @@ export default function Auth() {
       if (isLogin) {
         toast({
           title: "Welcome back!",
-          description: "You've successfully signed in.",
+          description: "You've successfully signed in.", 
         });
         navigate("/discover");
       } else {
