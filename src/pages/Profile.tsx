@@ -8,7 +8,10 @@ import { getUserFriendlyError } from "@/lib/errorHandler";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
 import Navbar from "@/components/Navbar";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   Home, 
   Save, 
@@ -19,7 +22,9 @@ import {
   Coffee, 
   Sofa, 
   FileText,
-  Loader2
+  Loader2,
+  Trash2,
+  AlertTriangle
 } from "lucide-react";
 
 // Import reusable step components
@@ -44,7 +49,10 @@ const profileTabs = [
 export default function Profile() {
   const [activeTab, setActiveTab] = useState("basic");
   const [saving, setSaving] = useState(false);
-  const { user, loading: authLoading } = useAuth();
+  const [deleting, setDeleting] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const { user, signOut, loading: authLoading } = useAuth();
   const { 
     profile, 
     formData, 
@@ -73,6 +81,33 @@ export default function Profile() {
       });
     }
     setSaving(false);
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmText !== "DELETE") return;
+    setDeleting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await supabase.functions.invoke("delete-account", {
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      if (res.error) throw res.error;
+      toast({
+        title: "Account deleted",
+        description: "Your account and all data have been permanently removed.",
+      });
+      await signOut();
+      navigate("/");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: getUserFriendlyError(error),
+        variant: "destructive",
+      });
+    }
+    setDeleting(false);
+    setShowDeleteDialog(false);
+    setDeleteConfirmText("");
   };
 
   if (authLoading || profileLoading) {
@@ -229,6 +264,77 @@ export default function Profile() {
             </TabsContent>
           </motion.div>
         </Tabs>
+
+        {/* Danger Zone */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="mt-12 mb-24"
+        >
+          <Card className="p-6 border-destructive/30 bg-destructive/5">
+            <div className="flex items-start gap-4">
+              <div className="p-2 rounded-lg bg-destructive/10">
+                <AlertTriangle className="h-5 w-5 text-destructive" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-serif text-lg font-semibold text-foreground mb-1">
+                  Delete Account
+                </h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Permanently delete your account and all associated data including matches, messages, and photos. This action cannot be undone.
+                </p>
+                <AlertDialog open={showDeleteDialog} onOpenChange={(open) => {
+                  setShowDeleteDialog(open);
+                  if (!open) setDeleteConfirmText("");
+                }}>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" size="sm" className="gap-2">
+                      <Trash2 className="h-4 w-4" />
+                      Delete Account
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will permanently delete your account, profile, all matches, messages, and uploaded photos. This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <div className="py-4">
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Type <span className="font-mono font-bold text-foreground">DELETE</span> to confirm:
+                      </p>
+                      <Input
+                        value={deleteConfirmText}
+                        onChange={(e) => setDeleteConfirmText(e.target.value)}
+                        placeholder="Type DELETE"
+                        className="font-mono"
+                      />
+                    </div>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <Button
+                        variant="destructive"
+                        onClick={handleDeleteAccount}
+                        disabled={deleteConfirmText !== "DELETE" || deleting}
+                      >
+                        {deleting ? (
+                          <span className="flex items-center gap-2">
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Deleting...
+                          </span>
+                        ) : (
+                          "Delete My Account"
+                        )}
+                      </Button>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
 
         {/* Bottom Save Button (Mobile) */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/80 backdrop-blur-md border-t border-border md:hidden">
