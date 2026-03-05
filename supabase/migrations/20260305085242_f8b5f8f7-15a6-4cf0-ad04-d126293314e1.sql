@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS snoozed_until timestamp with time zone DEFAULT NULL;
