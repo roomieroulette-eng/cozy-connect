@@ -1,4 +1,5 @@
 import { Profile } from "@/data/profiles";
+import { formatCurrency } from "@/lib/currency";
 import { motion } from "framer-motion";
 import {
   Sheet,
