@@ -42,14 +42,6 @@ import StepLifestyle from "@/components/onboarding/StepLifestyle";
 import StepLivingPreferences from "@/components/onboarding/StepLivingPreferences";
 import StepBio from "@/components/onboarding/StepBio";
 
-// Import reusable step components
-import StepBasicInfo from "@/components/onboarding/StepBasicInfo";
-import StepPhotos from "@/components/onboarding/StepPhotos";
-import StepLocation from "@/components/onboarding/StepLocation";
-import StepBudget from "@/components/onboarding/StepBudget";
-import StepLifestyle from "@/components/onboarding/StepLifestyle";
-import StepLivingPreferences from "@/components/onboarding/StepLivingPreferences";
-import StepBio from "@/components/onboarding/StepBio";
 
 const profileTabs = [
   { id: "basic", label: "Basic Info", icon: User },
