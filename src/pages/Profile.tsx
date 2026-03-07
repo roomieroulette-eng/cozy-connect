@@ -61,6 +61,7 @@ export default function Profile() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [snoozed, setSnoozed] = useState(false);
   const [snoozeDuration, setSnoozeDuration] = useState("1d");
+  const [selectedCurrency, setSelectedCurrency] = useState(getCurrencyOverride() || "auto");
   const { user, signOut, loading: authLoading } = useAuth();
   const { 
     profile, 
@@ -219,7 +220,7 @@ export default function Profile() {
                   {(formData.min_budget || formData.max_budget) && (
                     <span className="flex items-center gap-1">
                       <DollarSign className="h-3 w-3" />
-                      ${formData.min_budget || 0} - ${formData.max_budget || 0}/mo
+                      {formatBudgetRange(formData.min_budget, formData.max_budget)}
                     </span>
                   )}
                 </div>
@@ -338,6 +339,49 @@ export default function Profile() {
                 </Select>
               </div>
             )}
+          </Card>
+        </div>
+
+        {/* Currency Setting */}
+        <div className="mb-6">
+          <Card className="p-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Globe className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">Currency</p>
+                  <p className="text-xs text-muted-foreground">
+                    {selectedCurrency === "auto" ? `Auto-detected (${getUserCurrency()})` : "Manual override"}
+                  </p>
+                </div>
+              </div>
+              <Select
+                value={selectedCurrency}
+                onValueChange={(val) => {
+                  setSelectedCurrency(val);
+                  if (val === "auto") {
+                    setCurrencyOverride(null);
+                  } else {
+                    setCurrencyOverride(val);
+                  }
+                  toast({ title: "Currency updated", description: `Prices will now show in ${val === "auto" ? getUserCurrency() : val}.` });
+                }}
+              >
+                <SelectTrigger className="h-8 text-xs w-36">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="max-h-60">
+                  <SelectItem value="auto">Auto-detect</SelectItem>
+                  {SUPPORTED_CURRENCIES.map((c) => (
+                    <SelectItem key={c.code} value={c.code}>
+                      {c.symbol} {c.code}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </Card>
         </div>
 
