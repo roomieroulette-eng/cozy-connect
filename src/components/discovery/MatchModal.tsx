@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { formatBudgetRange } from "@/lib/currency";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -52,13 +53,7 @@ const MatchModal = ({
 
   if (!matchedProfile) return null;
 
-  const budgetDisplay = matchedProfile.minBudget && matchedProfile.maxBudget
-    ? `$${matchedProfile.minBudget}-$${matchedProfile.maxBudget}/mo`
-    : matchedProfile.maxBudget
-      ? `Up to $${matchedProfile.maxBudget}/mo`
-      : matchedProfile.minBudget
-        ? `From $${matchedProfile.minBudget}/mo`
-        : null;
+  const budgetDisplay = formatBudgetRange(matchedProfile.minBudget, matchedProfile.maxBudget);
 
   return (
     <AnimatePresence>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { formatBudgetRange } from "@/lib/currency";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -105,13 +106,7 @@ export function MatchedProfileSheet({ open, onOpenChange, userId, fallbackName, 
 
   const displayName = trimName(profile?.name) || trimName(fallbackName);
 
-  const budgetDisplay = profile?.min_budget && profile?.max_budget
-    ? `$${profile.min_budget}–$${profile.max_budget}/mo`
-    : profile?.max_budget
-      ? `Up to $${profile.max_budget}/mo`
-      : profile?.min_budget
-        ? `From $${profile.min_budget}/mo`
-        : null;
+  const budgetDisplay = formatBudgetRange(profile?.min_budget, profile?.max_budget);
 
   const traitTags = profile ? [
     profile.has_pets && profile.has_pets !== "no" ? { icon: Dog, label: "Has Pet" } : null,
