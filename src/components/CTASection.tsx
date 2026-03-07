@@ -1,61 +1,86 @@
+import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
 
 const CTASection = () => {
+  const { user } = useAuth();
+
   return (
-    <section className="py-20 lg:py-28">
-      <div className="container mx-auto px-4">
-        <div className="relative max-w-4xl mx-auto">
-          {/* Background Card */}
-          <div className="relative rounded-3xl overflow-hidden gradient-warm p-12 lg:p-16">
-            {/* Decorative Elements */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary-foreground/10 rounded-full blur-3xl" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary-foreground/10 rounded-full blur-3xl" />
+    <section className="bg-background border-t border-border">
+      <div className="container">
+        <div className="grid lg:grid-cols-12 items-stretch">
 
-            {/* Content */}
-            <div className="relative text-center">
-              {/* Icon */}
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary-foreground/20 backdrop-blur-sm mb-6">
-                <Sparkles className="w-8 h-8 text-primary-foreground" />
-              </div>
+          {/* ── Left: headline block ── */}
+          <div className="lg:col-span-7 py-20 lg:py-28 lg:pr-16 lg:border-r border-border/20 flex flex-col justify-center">
 
-              {/* Headline */}
-              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-foreground mb-6">
-                Ready to Find Your
-                <br />
-                Perfect Roommate?
-              </h2>
+            <span className="text-xs font-medium text-primary uppercase tracking-widest mb-8">
+              Get started today
+            </span>
 
-              {/* Subheadline */}
-              <p className="text-lg text-primary-foreground/80 max-w-xl mx-auto mb-8">
-                Join thousands of people who found their ideal living situation
-                through RoomieRoulette. It's free to get started!
-              </p>
+            <h2 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold text-foreground leading-[1.0] tracking-tight mb-8">
+              Ready to find<br />
+              <span className="text-primary italic font-light">your people?</span>
+            </h2>
 
-              {/* CTAs */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button
-                  size="xl"
-                  className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 font-semibold group"
-                >
-                  Get Started Free
-                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="xl"
-                  className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
-                >
-                  See How It Works
-                </Button>
-              </div>
+            <p className="text-base text-foreground/60 leading-relaxed font-light max-w-sm mb-12">
+              Join thousands who've stopped searching and started living. Takes less than 3 minutes to get started.
+            </p>
 
-              {/* Trust Badges */}
-              <p className="mt-8 text-sm text-primary-foreground/60">
-                ✓ No credit card required • ✓ Free to match • ✓ Cancel anytime
-              </p>
+            <div className="flex flex-wrap gap-3 mb-12">
+              <Button
+                size="lg"
+                className="bg-primary text-background hover:bg-primary/90 group"
+                asChild
+              >
+                <Link to={user ? "/discover" : "/auth?mode=signup"}>
+                  {user ? "Keep matching" : "Get started free"}
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
+              <Button
+                size="lg"
+                variant="ghost"
+                className="text-foreground/70 hover:text-foreground hover:bg-foreground/10"
+                onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })}
+              >
+                See how it works
+              </Button>
+            </div>
+
+            {/* Trust strip */}
+            <div className="flex flex-wrap items-center gap-6 pt-8 border-t border-foreground/10">
+              {["No credit card required", "Free to match", "Cancel anytime"].map((t) => (
+                <div key={t} className="flex items-center gap-1.5 text-xs text-foreground/50">
+                  <Check className="w-3 h-3 text-primary" strokeWidth={3} />
+                  {t}
+                </div>
+              ))}
             </div>
           </div>
+
+          {/* ── Right: stat block ── */}
+          <div className="lg:col-span-5 lg:pl-16 py-20 lg:py-28 flex flex-col justify-center gap-0 divide-y divide-foreground/10">
+            {[
+              { value: "24,000+", label: "Matches made", sub: "and counting" },
+              { value: "3 min", label: "To get started", sub: "average setup time" },
+              { value: "180+", label: "Cities covered", sub: "across 40+ countries" },
+              { value: "4.9 ★", label: "Average rating", sub: "from verified users" },
+            ].map((s) => (
+              <div key={s.label} className="py-6 first:pt-0 last:pb-0 group">
+                <div className="flex items-baseline justify-between gap-4">
+                  <div>
+                    <div className="font-serif text-3xl font-bold text-foreground leading-none mb-1">
+                      {s.value}
+                    </div>
+                    <div className="text-sm text-foreground/60 font-light">{s.label}</div>
+                  </div>
+                  <div className="text-xs text-foreground/30 text-right font-light">{s.sub}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
         </div>
       </div>
     </section>
