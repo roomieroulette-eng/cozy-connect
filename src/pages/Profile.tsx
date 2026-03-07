@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useProfile, ProfileFormData } from "@/hooks/useProfile";
 import { useToast } from "@/hooks/use-toast";
 import { getUserFriendlyError } from "@/lib/errorHandler";
+import { formatBudgetRange, getUserCurrency, setCurrencyOverride, getCurrencyOverride, SUPPORTED_CURRENCIES } from "@/lib/currency";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -25,11 +26,21 @@ import {
   Loader2,
   Trash2,
   AlertTriangle,
-  Moon
+  Moon,
+  Globe
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+
+// Import reusable step components
+import StepBasicInfo from "@/components/onboarding/StepBasicInfo";
+import StepPhotos from "@/components/onboarding/StepPhotos";
+import StepLocation from "@/components/onboarding/StepLocation";
+import StepBudget from "@/components/onboarding/StepBudget";
+import StepLifestyle from "@/components/onboarding/StepLifestyle";
+import StepLivingPreferences from "@/components/onboarding/StepLivingPreferences";
+import StepBio from "@/components/onboarding/StepBio";
 
 // Import reusable step components
 import StepBasicInfo from "@/components/onboarding/StepBasicInfo";
