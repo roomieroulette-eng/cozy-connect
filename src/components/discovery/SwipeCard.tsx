@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { formatBudgetRange } from "@/lib/currency";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import {

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { formatBudgetRange } from "@/lib/currency";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import {

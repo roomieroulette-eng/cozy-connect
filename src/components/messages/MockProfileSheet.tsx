@@ -103,7 +103,7 @@ export function MockProfileSheet({ open, onOpenChange, profile }: MockProfileShe
               </Badge>
               <Badge variant="secondary" className="flex items-center gap-1.5 rounded-full px-3 py-1">
                 <DollarSign className="w-3 h-3" />
-                ${profile.budget}/mo
+                {formatCurrency(profile.budget)}/mo
               </Badge>
             </div>
 
