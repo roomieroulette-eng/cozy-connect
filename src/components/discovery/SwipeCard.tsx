@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { formatBudgetRange } from "@/lib/currency";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import {
@@ -107,13 +108,7 @@ const SwipeCard = ({ profile, onSwipe, isTop }: SwipeCardProps) => {
     }
   };
 
-  const budgetDisplay = profile.minBudget && profile.maxBudget
-    ? `$${profile.minBudget}-$${profile.maxBudget}/mo`
-    : profile.maxBudget
-      ? `Up to $${profile.maxBudget}/mo`
-      : profile.minBudget
-        ? `From $${profile.minBudget}/mo`
-        : null;
+  const budgetDisplay = formatBudgetRange(profile.minBudget, profile.maxBudget);
 
   return (
     <motion.div

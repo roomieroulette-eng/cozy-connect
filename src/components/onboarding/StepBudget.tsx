@@ -1,4 +1,5 @@
 import { ProfileFormData } from "@/hooks/useProfile";
+import { getCurrencySymbol } from "@/lib/currency";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -30,6 +31,8 @@ const moveInOptions = [
 ];
 
 export default function StepBudget({ formData, setFormData }: StepBudgetProps) {
+  const currencySymbol = getCurrencySymbol();
+
   return (
     <Card className="p-6 space-y-6">
       {/* Budget Range */}
@@ -45,7 +48,7 @@ export default function StepBudget({ formData, setFormData }: StepBudgetProps) {
               Minimum
             </Label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">{currencySymbol}</span>
               <Input
                 id="min-budget"
                 type="number"
@@ -67,7 +70,7 @@ export default function StepBudget({ formData, setFormData }: StepBudgetProps) {
               Maximum
             </Label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">{currencySymbol}</span>
               <Input
                 id="max-budget"
                 type="number"

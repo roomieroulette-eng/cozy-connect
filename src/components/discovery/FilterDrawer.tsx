@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { formatCurrency } from "@/lib/currency";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -127,8 +128,8 @@ const FilterDrawer = ({ filters, onFiltersChange }: FilterDrawerProps) => {
               className="mt-2"
             />
             <div className="flex justify-between text-sm text-muted-foreground">
-              <span>${localFilters.budgetRange[0]}</span>
-              <span>${localFilters.budgetRange[1]}+</span>
+              <span>{formatCurrency(localFilters.budgetRange[0])}</span>
+              <span>{formatCurrency(localFilters.budgetRange[1])}+</span>
             </div>
           </div>
 
