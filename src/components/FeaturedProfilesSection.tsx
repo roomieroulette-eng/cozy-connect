@@ -250,7 +250,7 @@ const FeaturedProfilesSection = () => {
                     style={{
                       transform: `translateY(${offset * -8}px) scale(${1 - offset * 0.04})`,
                       zIndex: 3 - offset,
-                      opacity: 1 - offset * 0.25,
+                      opacity: 0 - offset * 0.25,
                     }}
                   >
                     {displayProfiles[idx]?.primaryPhotoUrl && (
