@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { MapPin, DollarSign, Dog, Coffee, Moon, Sparkles } from "lucide-react";
+import { MapPin, Banknote, Dog, Coffee, Moon, Sparkles } from "lucide-react";
 
 interface ProfileCardProps {
   name: string;
