@@ -48,19 +48,18 @@ export default function StepBudget({ formData, setFormData }: StepBudgetProps) {
               Minimum
             </Label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">{currencySymbol}</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">{currencySymbol}</span>
               <Input
                 id="min-budget"
                 type="number"
                 min={0}
-                max={10000}
-                placeholder="500"
+                placeholder="0"
                 value={formData.min_budget || ""}
                 onChange={(e) => setFormData(prev => ({ 
                   ...prev, 
                   min_budget: e.target.value ? parseInt(e.target.value) : null 
                 }))}
-                className="pl-7"
+                className="pl-8"
               />
             </div>
           </div>
