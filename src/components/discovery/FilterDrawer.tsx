@@ -55,7 +55,7 @@ const FilterDrawer = ({ filters, onFiltersChange }: FilterDrawerProps) => {
 
   const handleReset = () => {
     const defaultFilters: FilterOptions = {
-      budgetRange: [500, 2000],
+      budgetRange: [0, 5000000],
       neighborhoods: [],
       petsOk: null,
       smokingOk: null,
@@ -77,7 +77,7 @@ const FilterDrawer = ({ filters, onFiltersChange }: FilterDrawerProps) => {
   };
 
   const activeFiltersCount = [
-    filters.budgetRange[0] !== 500 || filters.budgetRange[1] !== 2000,
+    filters.budgetRange[0] !== 0 || filters.budgetRange[1] !== 5000000,
     filters.neighborhoods.length > 0,
     filters.petsOk !== null,
     filters.smokingOk !== null,
@@ -122,9 +122,9 @@ const FilterDrawer = ({ filters, onFiltersChange }: FilterDrawerProps) => {
                   budgetRange: value as [number, number],
                 }))
               }
-              min={300}
-              max={3000}
-              step={50}
+              min={0}
+              max={5000000}
+              step={5000}
               className="mt-2"
             />
             <div className="flex justify-between text-sm text-muted-foreground">
