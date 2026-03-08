@@ -19,7 +19,7 @@ import {
   User, 
   Camera, 
   MapPin, 
-  DollarSign, 
+  Banknote, 
   Coffee, 
   Sofa, 
   FileText,
