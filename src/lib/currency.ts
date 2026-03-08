@@ -134,6 +134,7 @@ export function formatCurrency(amount: number): string {
     return new Intl.NumberFormat(locale, {
       style: "currency",
       currency,
+      currencyDisplay: "narrowSymbol",
       maximumFractionDigits: 0,
       minimumFractionDigits: 0,
     }).format(amount);
@@ -153,13 +154,20 @@ export function getCurrencySymbol(): string {
     const parts = new Intl.NumberFormat(locale, {
       style: "currency",
       currency,
+      currencyDisplay: "narrowSymbol",
     }).formatToParts(0);
 
     const symbolPart = parts.find(p => p.type === "currency");
-    return symbolPart?.value || "$";
+    if (symbolPart?.value && symbolPart.value !== currency) {
+      return symbolPart.value;
+    }
   } catch {
-    return "$";
+    // fall through
   }
+
+  // Fallback to our stored symbol
+  const found = SUPPORTED_CURRENCIES.find(c => c.code === currency);
+  return found?.symbol || "$";
 }
 
 /**
