@@ -122,9 +122,9 @@ const FilterDrawer = ({ filters, onFiltersChange }: FilterDrawerProps) => {
                   budgetRange: value as [number, number],
                 }))
               }
-              min={300}
-              max={3000}
-              step={50}
+              min={0}
+              max={5000000}
+              step={5000}
               className="mt-2"
             />
             <div className="flex justify-between text-sm text-muted-foreground">
