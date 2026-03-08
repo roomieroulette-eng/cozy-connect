@@ -94,7 +94,7 @@ export function getUserCurrency(): string {
     } catch {
       // localStorage not available
     }
-    _cachedCurrency = "USD";
+    _cachedCurrency = "NGN";
   }
   return _cachedCurrency;
 }
