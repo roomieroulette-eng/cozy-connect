@@ -111,7 +111,7 @@ const FilterDrawer = ({ filters, onFiltersChange }: FilterDrawerProps) => {
           {/* Budget Range */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-primary" />
+              <Banknote className="w-5 h-5 text-primary" />
               <Label className="text-base font-medium">Budget Range</Label>
             </div>
             <Slider

@@ -38,7 +38,7 @@ export default function StepBudget({ formData, setFormData }: StepBudgetProps) {
       {/* Budget Range */}
       <div className="space-y-4">
         <Label className="flex items-center gap-2">
-          <DollarSign className="h-4 w-4 text-primary" />
+          <Banknote className="h-4 w-4 text-primary" />
           Monthly Budget Range
         </Label>
         

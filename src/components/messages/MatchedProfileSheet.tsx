@@ -198,7 +198,7 @@ export function MatchedProfileSheet({ open, onOpenChange, userId, fallbackName, 
                 )}
                 {budgetDisplay && (
                   <Badge variant="secondary" className="flex items-center gap-1.5 rounded-full px-3 py-1">
-                    <DollarSign className="w-3 h-3" />
+                    <Banknote className="w-3 h-3" />
                     {budgetDisplay}
                   </Badge>
                 )}

@@ -60,7 +60,7 @@ const ProfileCard = ({
               {location}
             </span>
             <span className="flex items-center gap-1">
-              <DollarSign className="w-4 h-4" />
+              <Banknote className="w-4 h-4" />
               {budget}/mo
             </span>
           </div>

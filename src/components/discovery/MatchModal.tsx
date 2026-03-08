@@ -3,7 +3,7 @@ import { formatBudgetRange } from "@/lib/currency";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageCircle, X, MapPin, DollarSign, Users } from "lucide-react";
+import { Heart, MessageCircle, X, MapPin, Banknote, Users } from "lucide-react";
 import { DiscoveryProfile } from "@/hooks/useDiscoveryProfiles";
 import confetti from "canvas-confetti";
 
