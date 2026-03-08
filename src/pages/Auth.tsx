@@ -211,7 +211,7 @@ export default function Auth() {
             <button
               type="button"
               onClick={async () => {
-                const { error } = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin } });
+                const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
                 if (error) setErrors({ email: getUserFriendlyError(error) });
               }}
               className="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-xl border border-border bg-background hover:bg-secondary/50 text-sm font-medium text-foreground transition-colors duration-150 mb-6"
