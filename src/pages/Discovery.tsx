@@ -12,7 +12,7 @@ import { useDiscoveryProfiles, DiscoveryProfile } from "@/hooks/useDiscoveryProf
 import { useMatches } from "@/hooks/useMatches";
 
 const defaultFilters: FilterOptions = {
-  budgetRange: [500, 2000],
+  budgetRange: [0, 5000000],
   neighborhoods: [],
   petsOk: null,
   smokingOk: null,

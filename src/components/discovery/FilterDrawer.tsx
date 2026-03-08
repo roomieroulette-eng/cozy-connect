@@ -77,7 +77,7 @@ const FilterDrawer = ({ filters, onFiltersChange }: FilterDrawerProps) => {
   };
 
   const activeFiltersCount = [
-    filters.budgetRange[0] !== 500 || filters.budgetRange[1] !== 2000,
+    filters.budgetRange[0] !== 0 || filters.budgetRange[1] !== 5000000,
     filters.neighborhoods.length > 0,
     filters.petsOk !== null,
     filters.smokingOk !== null,
