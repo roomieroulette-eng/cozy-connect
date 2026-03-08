@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { getUserFriendlyError } from "@/lib/errorHandler";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { Home, Mail, Lock, ArrowRight, CheckCircle, Eye, EyeOff } from "lucide-react";
 import heroImage from "@/assets/hero-living-room.jpg";
 
