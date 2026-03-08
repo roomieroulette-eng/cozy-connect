@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import {
   MapPin,
-  DollarSign,
+  Banknote,
   Dog,
   Coffee,
   Moon,
@@ -211,7 +211,7 @@ const SwipeCard = ({ profile, onSwipe, isTop }: SwipeCardProps) => {
             )}
             {budgetDisplay && (
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground text-sm">
-                <DollarSign className="w-3.5 h-3.5" />
+                <Banknote className="w-3.5 h-3.5" />
                 <span>{budgetDisplay}</span>
               </div>
             )}

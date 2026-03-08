@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   MapPin,
-  DollarSign,
+  Banknote,
   Dog,
   Coffee,
   Moon,
@@ -103,7 +103,7 @@ export function MockProfileSheet({ open, onOpenChange, profile }: MockProfileShe
                 {profile.neighborhood}, {profile.location}
               </Badge>
               <Badge variant="secondary" className="flex items-center gap-1.5 rounded-full px-3 py-1">
-                <DollarSign className="w-3 h-3" />
+                <Banknote className="w-3 h-3" />
                 {formatCurrency(profile.budget)}/mo
               </Badge>
             </div>

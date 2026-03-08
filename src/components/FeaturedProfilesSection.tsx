@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, ArrowLeft, MapPin, DollarSign, Moon, Sun, PawPrint, Wine, Laptop } from "lucide-react";
+import { ArrowRight, ArrowLeft, MapPin, Banknote, Moon, Sun, PawPrint, Wine, Laptop } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDiscoveryProfiles } from "@/hooks/useDiscoveryProfiles";
 import { useAuth } from "@/hooks/useAuth";
@@ -74,7 +74,7 @@ const ProfileCard = ({ profile, isPlaceholder }) => (
 
       {(profile.minBudget || profile.maxBudget) && (
         <div className="absolute top-3 right-3 bg-card/90 backdrop-blur-sm border border-border rounded-full px-3 py-1 flex items-center gap-1">
-          <DollarSign className="w-3 h-3 text-primary" />
+          <Banknote className="w-3 h-3 text-primary" />
           <span className="text-xs font-semibold text-foreground">
             {profile.minBudget && profile.maxBudget
               ? `$${profile.minBudget}–$${profile.maxBudget}`

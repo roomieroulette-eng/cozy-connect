@@ -7,7 +7,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { DollarSign, Calendar as CalendarIcon, Clock } from "lucide-react";
+import { Banknote, Calendar as CalendarIcon, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
@@ -38,7 +38,7 @@ export default function StepBudget({ formData, setFormData }: StepBudgetProps) {
       {/* Budget Range */}
       <div className="space-y-4">
         <Label className="flex items-center gap-2">
-          <DollarSign className="h-4 w-4 text-primary" />
+          <Banknote className="h-4 w-4 text-primary" />
           Monthly Budget Range
         </Label>
         

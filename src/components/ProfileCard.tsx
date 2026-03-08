@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { MapPin, DollarSign, Dog, Coffee, Moon, Sparkles } from "lucide-react";
+import { MapPin, Banknote, Dog, Coffee, Moon, Sparkles } from "lucide-react";
 
 interface ProfileCardProps {
   name: string;
@@ -60,7 +60,7 @@ const ProfileCard = ({
               {location}
             </span>
             <span className="flex items-center gap-1">
-              <DollarSign className="w-4 h-4" />
+              <Banknote className="w-4 h-4" />
               {budget}/mo
             </span>
           </div>

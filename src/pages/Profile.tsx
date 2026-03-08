@@ -19,7 +19,7 @@ import {
   User, 
   Camera, 
   MapPin, 
-  DollarSign, 
+  Banknote, 
   Coffee, 
   Sofa, 
   FileText,
@@ -47,7 +47,7 @@ const profileTabs = [
   { id: "basic", label: "Basic Info", icon: User },
   { id: "photos", label: "Photos", icon: Camera },
   { id: "location", label: "Location", icon: MapPin },
-  { id: "budget", label: "Budget", icon: DollarSign },
+  { id: "budget", label: "Budget", icon: Banknote },
   { id: "lifestyle", label: "Lifestyle", icon: Coffee },
   { id: "living", label: "Living", icon: Sofa },
   { id: "bio", label: "About", icon: FileText },
@@ -219,7 +219,7 @@ export default function Profile() {
                   )}
                   {(formData.min_budget || formData.max_budget) && (
                     <span className="flex items-center gap-1">
-                      <DollarSign className="h-3 w-3" />
+                      <Banknote className="h-3 w-3" />
                       {formatBudgetRange(formData.min_budget, formData.max_budget)}
                     </span>
                   )}
