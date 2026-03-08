@@ -47,7 +47,7 @@ const profileTabs = [
   { id: "basic", label: "Basic Info", icon: User },
   { id: "photos", label: "Photos", icon: Camera },
   { id: "location", label: "Location", icon: MapPin },
-  { id: "budget", label: "Budget", icon: DollarSign },
+  { id: "budget", label: "Budget", icon: Banknote },
   { id: "lifestyle", label: "Lifestyle", icon: Coffee },
   { id: "living", label: "Living", icon: Sofa },
   { id: "bio", label: "About", icon: FileText },
