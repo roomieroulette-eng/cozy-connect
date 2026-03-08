@@ -55,7 +55,7 @@ const FilterDrawer = ({ filters, onFiltersChange }: FilterDrawerProps) => {
 
   const handleReset = () => {
     const defaultFilters: FilterOptions = {
-      budgetRange: [500, 2000],
+      budgetRange: [0, 5000000],
       neighborhoods: [],
       petsOk: null,
       smokingOk: null,
