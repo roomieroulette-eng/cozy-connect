@@ -134,6 +134,7 @@ export function formatCurrency(amount: number): string {
     return new Intl.NumberFormat(locale, {
       style: "currency",
       currency,
+      currencyDisplay: "narrowSymbol",
       maximumFractionDigits: 0,
       minimumFractionDigits: 0,
     }).format(amount);
