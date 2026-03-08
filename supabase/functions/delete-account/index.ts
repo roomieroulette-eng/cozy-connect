@@ -2,7 +2,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 Deno.serve(async (req) => {
@@ -11,7 +12,6 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Verify the user is authenticated
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Missing authorization" }), {
@@ -20,16 +20,30 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Create client with user's token to get their ID
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    if (!supabaseUrl || !supabaseAnonKey || !serviceRoleKey) {
+      console.error("Missing env vars:", {
+        url: !!supabaseUrl,
+        anon: !!supabaseAnonKey,
+        service: !!serviceRoleKey,
+      });
+      return new Response(JSON.stringify({ error: "Server configuration error" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const userClient = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const { data: { user }, error: userError } = await userClient.auth.getUser();
+    const {
+      data: { user },
+      error: userError,
+    } = await userClient.auth.getUser();
     if (userError || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
@@ -38,8 +52,6 @@ Deno.serve(async (req) => {
     }
 
     const userId = user.id;
-
-    // Use service role client to delete user data and auth account
     const adminClient = createClient(supabaseUrl, serviceRoleKey);
 
     // Delete profile photos from storage
@@ -52,7 +64,7 @@ Deno.serve(async (req) => {
       await adminClient.storage.from("profile-photos").remove(filePaths);
     }
 
-    // Delete user data (cascade will handle some, but be explicit)
+    // Delete user data
     await adminClient.from("notifications").delete().eq("user_id", userId);
     await adminClient.from("messages").delete().eq("sender_id", userId);
     await adminClient.from("swipes").delete().eq("swiper_id", userId);
