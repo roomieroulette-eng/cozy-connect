@@ -115,18 +115,23 @@ export default function Profile() {
         title: "Account deleted",
         description: "Your account and all data have been permanently removed.",
       });
-      await signOut();
-      navigate("/");
     } catch (error) {
       toast({
         title: "Error",
         description: getUserFriendlyError(error),
         variant: "destructive",
       });
+      setDeleting(false);
+      setShowDeleteDialog(false);
+      setDeleteConfirmText("");
+      return;
     }
+    // Always sign out and redirect after successful deletion
+    try { await signOut(); } catch { /* user already deleted from auth */ }
     setDeleting(false);
     setShowDeleteDialog(false);
     setDeleteConfirmText("");
+    navigate("/");
   };
 
   if (authLoading || profileLoading) {
