@@ -85,7 +85,6 @@ let _cachedCurrency: string | null = null;
 
 export function getUserCurrency(): string {
   if (!_cachedCurrency) {
-    // Check for manual override first
     try {
       const override = localStorage.getItem(CURRENCY_OVERRIDE_KEY);
       if (override && SUPPORTED_CURRENCIES.some(c => c.code === override)) {
@@ -95,7 +94,7 @@ export function getUserCurrency(): string {
     } catch {
       // localStorage not available
     }
-    _cachedCurrency = detectCurrency();
+    _cachedCurrency = "USD";
   }
   return _cachedCurrency;
 }
