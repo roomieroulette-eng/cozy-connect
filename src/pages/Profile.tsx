@@ -219,7 +219,7 @@ export default function Profile() {
                   )}
                   {(formData.min_budget || formData.max_budget) && (
                     <span className="flex items-center gap-1">
-                      <DollarSign className="h-3 w-3" />
+                      <Banknote className="h-3 w-3" />
                       {formatBudgetRange(formData.min_budget, formData.max_budget)}
                     </span>
                   )}
