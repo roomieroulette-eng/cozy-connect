@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, ArrowLeft, MapPin, DollarSign, Moon, Sun, PawPrint, Wine, Laptop } from "lucide-react";
+import { ArrowRight, ArrowLeft, MapPin, Banknote, Moon, Sun, PawPrint, Wine, Laptop } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDiscoveryProfiles } from "@/hooks/useDiscoveryProfiles";
 import { useAuth } from "@/hooks/useAuth";
