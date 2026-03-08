@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import {
   MapPin,
-  DollarSign,
+  Banknote,
   Dog,
   Coffee,
   Moon,
