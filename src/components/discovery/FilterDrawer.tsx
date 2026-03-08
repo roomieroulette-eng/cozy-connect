@@ -14,7 +14,7 @@ import {
   SheetTrigger,
   SheetFooter,
 } from "@/components/ui/sheet";
-import { SlidersHorizontal, MapPin, DollarSign, Dog, Coffee, Moon, Sparkles, Users, X } from "lucide-react";
+import { SlidersHorizontal, MapPin, Banknote, Dog, Coffee, Moon, Sparkles, Users, X } from "lucide-react";
 
 export interface FilterOptions {
   budgetRange: [number, number];
