@@ -142,7 +142,7 @@ const Navbar = () => {
 
       {/* Mobile panel */}
       <div
-        className={`fixed top-16 left-0 right-0 z-[49] bg-background/97 border-b border-border/45 shadow-xl md:hidden overflow-hidden transition-all duration-300 ease-in-out
+        className={`fixed top-16 left-0 right-0 z-[49] bg-background border-b border-border/45 shadow-xl md:hidden overflow-hidden transition-all duration-300 ease-in-out
           ${mobileMenuOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"}`}
       >
         <div className="p-3 pb-5 px-5">
