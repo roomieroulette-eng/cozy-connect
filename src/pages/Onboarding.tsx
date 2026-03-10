@@ -47,6 +47,16 @@ export default function Onboarding() {
   const progress = (currentStep / TOTAL_STEPS) * 100;
 
   const handleNext = async () => {
+    // Validate minimum 2 photos on step 2
+    if (currentStep === 2 && formData.photos.length < 2) {
+      toast({
+        title: "Photos required",
+        description: "Please upload at least 2 photos before continuing.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setSaving(true);
     const { error } = await updateProfile(formData);
     
