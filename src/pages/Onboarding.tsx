@@ -47,6 +47,36 @@ export default function Onboarding() {
   const progress = (currentStep / TOTAL_STEPS) * 100;
 
   const handleNext = async () => {
+    // Validate all fields on step 1
+    if (currentStep === 1) {
+      if (!formData.name.trim() || !formData.age || !formData.gender || !formData.occupation.trim()) {
+        toast({
+          title: "All fields required",
+          description: "Please fill in your name, age, gender, and occupation before continuing.",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (formData.age < 18) {
+        toast({
+          title: "Age requirement",
+          description: "You must be at least 18 years old.",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
+    // Validate minimum 2 photos on step 2
+    if (currentStep === 2 && formData.photos.length < 2) {
+      toast({
+        title: "Photos required",
+        description: "Please upload at least 2 photos before continuing.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setSaving(true);
     const { error } = await updateProfile(formData);
     
