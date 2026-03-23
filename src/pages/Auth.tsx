@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -7,12 +7,22 @@ import { getUserFriendlyError } from "@/lib/errorHandler";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Home, Mail, Lock, ArrowRight, CheckCircle, Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 import heroImage from "@/assets/hero-living-room.jpg";
 
 export default function Auth() {
   const searchParams = new URLSearchParams(window.location.search);
   const [isLogin, setIsLogin] = useState(searchParams.get("mode") !== "signup");
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+  // Show success toast when arriving after email verification
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash && hash.includes("type=signup")) {
+      toast.success("Email verified! You can now sign in.");
+      // Clean up the hash
+      window.history.replaceState(null, "", "/auth");
+    }
+  }, []);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
