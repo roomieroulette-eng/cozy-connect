@@ -33,6 +33,7 @@ export function useDiscoveryProfiles() {
   const [swipedIds, setSwipedIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [swiping, setSwiping] = useState(false);
+  const [userHousingStatus, setUserHousingStatus] = useState<string | null>(null);
 
   // Fetch already-swiped user IDs
   const fetchSwipedIds = useCallback(async () => {
