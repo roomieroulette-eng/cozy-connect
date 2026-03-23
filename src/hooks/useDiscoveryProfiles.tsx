@@ -61,8 +61,15 @@ export function useDiscoveryProfiles() {
 
     setLoading(true);
     try {
-      const swiped = await fetchSwipedIds();
+      // Fetch current user's housing status and swiped IDs in parallel
+      const [swiped, profileResult] = await Promise.all([
+        fetchSwipedIds(),
+        supabase.from("profiles").select("housing_status").eq("user_id", user.id).single(),
+      ]);
+
       setSwipedIds(swiped);
+      const myHousingStatus = profileResult.data?.housing_status ?? null;
+      setUserHousingStatus(myHousingStatus);
 
       const { data, error } = await supabase
         .from("profile_previews")
@@ -73,10 +80,29 @@ export function useDiscoveryProfiles() {
       if (error) throw error;
 
       // Filter out already-swiped and snoozed profiles
-      const unswiped = (data || []).filter(
+      let unswiped = (data || []).filter(
         (p) => p.user_id && !swiped.has(p.user_id) &&
           (!(p as any).snoozed_until || new Date((p as any).snoozed_until) < new Date())
       );
+
+      // Auto-filter by complementary housing status
+      if (myHousingStatus) {
+        const complementary = myHousingStatus.toLowerCase() === "has a place"
+          ? "looking for a place"
+          : myHousingStatus.toLowerCase() === "looking for a place"
+            ? "has a place"
+            : null;
+
+        if (complementary) {
+          const filtered = unswiped.filter(
+            (p) => (p as any).housing_status?.toLowerCase() === complementary
+          );
+          // Only apply filter if it yields results, otherwise show all
+          if (filtered.length > 0) {
+            unswiped = filtered;
+          }
+        }
+      }
 
       // Map to DiscoveryProfile - primary_photo already contains full URLs from the view
       const mapped: DiscoveryProfile[] = unswiped.map((p) => ({
