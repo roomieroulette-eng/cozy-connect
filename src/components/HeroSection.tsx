@@ -142,6 +142,27 @@ const HeroSection = () => {
             </div>
           </div>
 
+          {/* ── Hero image (mobile) ── */}
+          <div className="lg:hidden mt-8">
+            <div className="relative rounded-2xl overflow-hidden aspect-[16/9]">
+              <img
+                src={heroImage}
+                alt="Living room"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/50 via-transparent to-transparent" />
+              <div className="absolute top-4 right-4 bg-card/90 backdrop-blur-sm border border-border rounded-xl px-3 py-2 text-center">
+                <div className="font-serif text-xl font-bold text-foreground leading-none">
+                  4.9
+                </div>
+                <div className="text-yellow-500 text-xs mt-1">★★★★★</div>
+                <div className="text-xs text-muted-foreground mt-0.5">
+                  avg rating
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* ── Right ── */}
           <div className="hidden lg:flex lg:col-span-6 flex-col pl-16 justify-center gap-6">
             {/* Hero image */}
