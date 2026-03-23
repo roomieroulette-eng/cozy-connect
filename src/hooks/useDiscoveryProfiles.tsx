@@ -216,6 +216,7 @@ export function useDiscoveryProfiles() {
     profiles,
     loading,
     swiping,
+    userHousingStatus,
     recordSwipe,
     refreshProfiles: fetchProfiles,
   };
