@@ -13,6 +13,21 @@ export default function Auth() {
   const searchParams = new URLSearchParams(window.location.search);
   const [isLogin, setIsLogin] = useState(searchParams.get("mode") !== "signup");
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [verificationShown, setVerificationShown] = useState(false);
+
+  // Show success toast when arriving after email verification
+  useEffect(() => {
+    if (verificationShown) return;
+    const hash = window.location.hash;
+    if (hash && hash.includes("type=signup")) {
+      setVerificationShown(true);
+      // Small delay so toast renders after page mount
+      setTimeout(() => {
+        const { toast } = await import("sonner");
+        // Use sonner toast
+      }, 0);
+    }
+  }, [verificationShown]);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
