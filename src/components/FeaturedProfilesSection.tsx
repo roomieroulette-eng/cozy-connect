@@ -222,7 +222,7 @@ const FeaturedProfilesSection = () => {
 
             {/* Card viewer */}
             <div className="relative w-full max-w-sm mx-auto lg:mx-0 shrink-0" style={{ height: "520px" }}>
-              <AnimatePresence custom={direction}>
+              <AnimatePresence initial={false} custom={direction} mode="popLayout">
                 <motion.div
                   key={displayProfiles[activeIndex].userId}
                   custom={direction}
@@ -230,8 +230,8 @@ const FeaturedProfilesSection = () => {
                   initial="enter"
                   animate="center"
                   exit="exit"
-                  transition={{ duration: 0.5, ease: "easeInOut" }}
-                  className="absolute inset-0"
+                  transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
+                  className="absolute inset-0 z-10"
                 >
                   <ProfileCard
                     profile={displayProfiles[activeIndex]}
