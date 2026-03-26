@@ -11,6 +11,7 @@ import Messages from "./pages/Messages";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
 import Profile from "./pages/Profile";
+import GroceryBills from "./pages/GroceryBills";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
@@ -56,6 +57,14 @@ const App = () => (
               element={
                 <ProtectedRoute requireOnboarding>
                   <Profile />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/grocery-bills" 
+              element={
+                <ProtectedRoute requireOnboarding>
+                  <GroceryBills />
                 </ProtectedRoute>
               } 
             />
