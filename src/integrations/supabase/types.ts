@@ -14,6 +14,97 @@ export type Database = {
   }
   public: {
     Tables: {
+      grocery_bill_items: {
+        Row: {
+          assigned_to: string | null
+          bill_id: string
+          id: string
+          name: string
+          price: number
+        }
+        Insert: {
+          assigned_to?: string | null
+          bill_id: string
+          id?: string
+          name: string
+          price?: number
+        }
+        Update: {
+          assigned_to?: string | null
+          bill_id?: string
+          id?: string
+          name?: string
+          price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "grocery_bill_items_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "grocery_bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      grocery_bill_participants: {
+        Row: {
+          amount_owed: number
+          bill_id: string
+          id: string
+          paid: boolean
+          user_id: string
+        }
+        Insert: {
+          amount_owed?: number
+          bill_id: string
+          id?: string
+          paid?: boolean
+          user_id: string
+        }
+        Update: {
+          amount_owed?: number
+          bill_id?: string
+          id?: string
+          paid?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "grocery_bill_participants_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "grocery_bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      grocery_bills: {
+        Row: {
+          created_at: string
+          creator_id: string
+          id: string
+          settled_at: string | null
+          split_type: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          creator_id: string
+          id?: string
+          settled_at?: string | null
+          split_type?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          creator_id?: string
+          id?: string
+          settled_at?: string | null
+          split_type?: string
+          title?: string
+        }
+        Relationships: []
+      }
       matches: {
         Row: {
           created_at: string
