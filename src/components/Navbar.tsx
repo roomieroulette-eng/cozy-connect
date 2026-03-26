@@ -10,6 +10,7 @@ import {
   X,
   LogOut,
   ChevronDown,
+  ShoppingCart,
 } from "lucide-react";
 import { NotificationBell } from "@/components/NotificationBell";
 
@@ -23,6 +24,7 @@ const Navbar = () => {
   const navLinks = [
     { label: "Discover", icon: Users, href: "/discover" },
     { label: "Messages", icon: MessageCircle, href: "/messages" },
+    { label: "Bills", icon: ShoppingCart, href: "/grocery-bills" },
     { label: "Profile", icon: User, href: "/profile" },
   ];
 
