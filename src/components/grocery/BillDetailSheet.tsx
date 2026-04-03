@@ -30,9 +30,10 @@ interface BillDetailSheetProps {
   onMarkPaid: (billId: string, userId: string) => Promise<void>;
   onDelete: (billId: string) => Promise<void>;
   onJoin: (billId: string) => Promise<void>;
+  onLeave: (billId: string) => Promise<void>;
 }
 
-export function BillDetailSheet({ bill, currentUserId, onClose, onMarkPaid, onDelete, onJoin }: BillDetailSheetProps) {
+export function BillDetailSheet({ bill, currentUserId, onClose, onMarkPaid, onDelete, onJoin, onLeave }: BillDetailSheetProps) {
   if (!bill) return null;
 
   const isCreator = bill.creatorId === currentUserId;
