@@ -214,9 +214,76 @@ export function useGroceryBills() {
     }
   };
 
+  const joinBill = async (billId: string) => {
+    if (!user) return;
+    try {
+      // Check if already a participant
+      const bill = bills.find((b) => b.id === billId);
+      if (bill?.participants.some((p) => p.userId === user.id)) {
+        toast({ title: "Already joined", description: "You're already part of this bill." });
+        return;
+      }
+
+      // For equal split, recalculate amounts for everyone
+      if (bill && bill.splitType === "equal") {
+        const newParticipantCount = bill.participants.length + 1;
+        const perPerson = Math.round((bill.total / newParticipantCount) * 100) / 100;
+
+        // Insert self as participant
+        const { error: joinError } = await supabase.from("grocery_bill_participants").insert({
+          bill_id: billId,
+          user_id: user.id,
+          amount_owed: perPerson,
+        });
+        if (joinError) throw joinError;
+
+        // Update existing participants' amounts
+        for (const p of bill.participants) {
+          await supabase
+            .from("grocery_bill_participants")
+            .update({ amount_owed: perPerson })
+            .eq("id", p.id);
+        }
+      } else {
+        // Itemized: join with 0 owed (unassigned items will be recalculated)
+        const unassignedTotal = (bill?.items || [])
+          .filter((i) => !i.assignedTo)
+          .reduce((sum, i) => sum + i.price, 0);
+        const newParticipantCount = (bill?.participants.length || 0) + 1;
+        const perPerson = Math.round((unassignedTotal / newParticipantCount) * 100) / 100;
+
+        const { error: joinError } = await supabase.from("grocery_bill_participants").insert({
+          bill_id: billId,
+          user_id: user.id,
+          amount_owed: perPerson,
+        });
+        if (joinError) throw joinError;
+
+        // Recalculate unassigned split for existing participants
+        if (bill) {
+          for (const p of bill.participants) {
+            const assignedAmount = bill.items
+              .filter((i) => i.assignedTo === p.userId)
+              .reduce((sum, i) => sum + i.price, 0);
+            const newOwed = Math.round((assignedAmount + perPerson) * 100) / 100;
+            await supabase
+              .from("grocery_bill_participants")
+              .update({ amount_owed: newOwed })
+              .eq("id", p.id);
+          }
+        }
+      }
+
+      toast({ title: "Joined!", description: "You've joined this bill." });
+      await fetchBills();
+    } catch (err: any) {
+      toast({ title: "Error joining bill", description: err.message, variant: "destructive" });
+    }
+  };
+
   useEffect(() => {
     fetchBills();
   }, [fetchBills]);
 
-  return { bills, loading, createBill, markPaid, deleteBill, refetch: fetchBills };
+  return { bills, loading, createBill, markPaid, deleteBill, joinBill, refetch: fetchBills };
 }
