@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/currency";
 import { formatDistanceToNow } from "date-fns";
-import { CheckCircle2, Circle, Trash2 } from "lucide-react";
+import { CheckCircle2, Circle, Trash2, Users } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,12 +29,15 @@ interface BillDetailSheetProps {
   onClose: () => void;
   onMarkPaid: (billId: string, userId: string) => Promise<void>;
   onDelete: (billId: string) => Promise<void>;
+  onJoin: (billId: string) => Promise<void>;
 }
 
-export function BillDetailSheet({ bill, currentUserId, onClose, onMarkPaid, onDelete }: BillDetailSheetProps) {
+export function BillDetailSheet({ bill, currentUserId, onClose, onMarkPaid, onDelete, onJoin }: BillDetailSheetProps) {
   if (!bill) return null;
 
   const isCreator = bill.creatorId === currentUserId;
+  const isParticipant = bill.participants.some((p) => p.userId === currentUserId);
+  const canJoin = !isParticipant && !bill.settledAt;
 
   return (
     <Sheet open={!!bill} onOpenChange={(open) => !open && onClose()}>
@@ -117,6 +120,19 @@ export function BillDetailSheet({ bill, currentUserId, onClose, onMarkPaid, onDe
               ))}
             </div>
           </div>
+
+          {/* Join */}
+          {canJoin && (
+            <Button
+              className="w-full gap-2"
+              onClick={async () => {
+                await onJoin(bill.id);
+              }}
+            >
+              <Users size={14} />
+              Join This Bill
+            </Button>
+          )}
 
           {/* Delete */}
           {isCreator && (

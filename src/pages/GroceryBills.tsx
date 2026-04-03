@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Receipt, ShoppingCart } from "lucide-react";
 
 export default function GroceryBills() {
-  const { bills, loading, createBill, markPaid, deleteBill } = useGroceryBills();
+  const { bills, loading, createBill, markPaid, deleteBill, joinBill } = useGroceryBills();
   const { user } = useAuth();
   const [createOpen, setCreateOpen] = useState(false);
   const [selectedBill, setSelectedBill] = useState<GroceryBill | null>(null);
@@ -109,6 +109,7 @@ export default function GroceryBills() {
         onClose={() => setSelectedBill(null)}
         onMarkPaid={markPaid}
         onDelete={deleteBill}
+        onJoin={joinBill}
       />
     </div>
   );
