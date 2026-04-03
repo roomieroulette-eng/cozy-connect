@@ -283,9 +283,46 @@ export function useGroceryBills() {
     }
   };
 
+  const leaveBill = async (billId: string) => {
+    if (!user) return;
+    try {
+      const bill = bills.find((b) => b.id === billId);
+      if (!bill) return;
+      if (bill.creatorId === user.id) {
+        toast({ title: "Can't leave", description: "You created this bill. Delete it instead.", variant: "destructive" });
+        return;
+      }
+
+      // Remove self from participants
+      const { error } = await supabase
+        .from("grocery_bill_participants")
+        .delete()
+        .eq("bill_id", billId)
+        .eq("user_id", user.id);
+      if (error) throw error;
+
+      // Recalculate amounts for remaining participants
+      const remaining = bill.participants.filter((p) => p.userId !== user.id);
+      if (remaining.length > 0 && bill.splitType === "equal") {
+        const perPerson = Math.round((bill.total / remaining.length) * 100) / 100;
+        for (const p of remaining) {
+          await supabase
+            .from("grocery_bill_participants")
+            .update({ amount_owed: perPerson })
+            .eq("id", p.id);
+        }
+      }
+
+      toast({ title: "Left bill", description: "You've left this bill." });
+      await fetchBills();
+    } catch (err: any) {
+      toast({ title: "Error leaving bill", description: err.message, variant: "destructive" });
+    }
+  };
+
   useEffect(() => {
     fetchBills();
   }, [fetchBills]);
 
-  return { bills, loading, createBill, markPaid, deleteBill, joinBill, refetch: fetchBills };
+  return { bills, loading, createBill, markPaid, deleteBill, joinBill, leaveBill, refetch: fetchBills };
 }
