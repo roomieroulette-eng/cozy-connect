@@ -135,6 +135,37 @@ export function BillDetailSheet({ bill, currentUserId, onClose, onMarkPaid, onDe
             </Button>
           )}
 
+          {/* Leave */}
+          {isParticipant && !isCreator && !bill.settledAt && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" className="w-full gap-2 text-destructive hover:text-destructive">
+                  <LogOut size={14} />
+                  Leave Bill
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Leave this bill?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    You'll be removed from "{bill.title}" and amounts will be recalculated.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={async () => {
+                      await onLeave(bill.id);
+                      onClose();
+                    }}
+                  >
+                    Leave
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+
           {/* Delete */}
           {isCreator && (
             <AlertDialog>

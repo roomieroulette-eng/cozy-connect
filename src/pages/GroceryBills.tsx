@@ -110,6 +110,7 @@ export default function GroceryBills() {
         onMarkPaid={markPaid}
         onDelete={deleteBill}
         onJoin={joinBill}
+        onLeave={leaveBill}
       />
     </div>
   );
