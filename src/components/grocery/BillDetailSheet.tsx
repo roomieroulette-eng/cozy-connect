@@ -29,12 +29,15 @@ interface BillDetailSheetProps {
   onClose: () => void;
   onMarkPaid: (billId: string, userId: string) => Promise<void>;
   onDelete: (billId: string) => Promise<void>;
+  onJoin: (billId: string) => Promise<void>;
 }
 
-export function BillDetailSheet({ bill, currentUserId, onClose, onMarkPaid, onDelete }: BillDetailSheetProps) {
+export function BillDetailSheet({ bill, currentUserId, onClose, onMarkPaid, onDelete, onJoin }: BillDetailSheetProps) {
   if (!bill) return null;
 
   const isCreator = bill.creatorId === currentUserId;
+  const isParticipant = bill.participants.some((p) => p.userId === currentUserId);
+  const canJoin = !isParticipant && !bill.settledAt;
 
   return (
     <Sheet open={!!bill} onOpenChange={(open) => !open && onClose()}>
