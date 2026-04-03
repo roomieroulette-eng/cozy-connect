@@ -57,14 +57,14 @@ export function useGroceryBills() {
             supabase.from("grocery_bill_participants").select("*").eq("bill_id", bill.id),
           ]);
 
-          // Get participant names
-          const userIds = (participants || []).map((p: any) => p.user_id);
+          // Get participant + creator names
+          const allUserIds = [...new Set([...(participants || []).map((p: any) => p.user_id), bill.creator_id])];
           let nameMap: Record<string, string> = {};
-          if (userIds.length > 0) {
+          if (allUserIds.length > 0) {
             const { data: profiles } = await supabase
               .from("profiles")
               .select("user_id, name")
-              .in("user_id", userIds);
+              .in("user_id", allUserIds);
             (profiles || []).forEach((p: any) => {
               nameMap[p.user_id] = p.name || "Unknown";
             });
