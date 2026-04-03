@@ -30,9 +30,10 @@ export function BillCard({ bill, currentUserId, onClick }: BillCardProps) {
             </Badge>
           </div>
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <span className="truncate">by {bill.creatorId === currentUserId ? "You" : bill.creatorName}</span>
             <span className="flex items-center gap-1">
               <Users size={12} />
-              {bill.participants.length} people
+              {bill.participants.length}
             </span>
             <span className="flex items-center gap-1">
               <Clock size={12} />

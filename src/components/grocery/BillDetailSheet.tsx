@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/currency";
 import { formatDistanceToNow } from "date-fns";
-import { CheckCircle2, Circle, Trash2, Users } from "lucide-react";
+import { CheckCircle2, Circle, Trash2, Users, LogOut } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,9 +30,10 @@ interface BillDetailSheetProps {
   onMarkPaid: (billId: string, userId: string) => Promise<void>;
   onDelete: (billId: string) => Promise<void>;
   onJoin: (billId: string) => Promise<void>;
+  onLeave: (billId: string) => Promise<void>;
 }
 
-export function BillDetailSheet({ bill, currentUserId, onClose, onMarkPaid, onDelete, onJoin }: BillDetailSheetProps) {
+export function BillDetailSheet({ bill, currentUserId, onClose, onMarkPaid, onDelete, onJoin, onLeave }: BillDetailSheetProps) {
   if (!bill) return null;
 
   const isCreator = bill.creatorId === currentUserId;
@@ -132,6 +133,37 @@ export function BillDetailSheet({ bill, currentUserId, onClose, onMarkPaid, onDe
               <Users size={14} />
               Join This Bill
             </Button>
+          )}
+
+          {/* Leave */}
+          {isParticipant && !isCreator && !bill.settledAt && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" className="w-full gap-2 text-destructive hover:text-destructive">
+                  <LogOut size={14} />
+                  Leave Bill
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Leave this bill?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    You'll be removed from "{bill.title}" and amounts will be recalculated.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={async () => {
+                      await onLeave(bill.id);
+                      onClose();
+                    }}
+                  >
+                    Leave
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           )}
 
           {/* Delete */}

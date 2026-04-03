@@ -23,6 +23,7 @@ export interface GroceryBillParticipant {
 export interface GroceryBill {
   id: string;
   creatorId: string;
+  creatorName: string;
   title: string;
   splitType: "equal" | "itemized";
   createdAt: string;
@@ -56,14 +57,14 @@ export function useGroceryBills() {
             supabase.from("grocery_bill_participants").select("*").eq("bill_id", bill.id),
           ]);
 
-          // Get participant names
-          const userIds = (participants || []).map((p: any) => p.user_id);
+          // Get participant + creator names
+          const allUserIds = [...new Set([...(participants || []).map((p: any) => p.user_id), bill.creator_id])];
           let nameMap: Record<string, string> = {};
-          if (userIds.length > 0) {
+          if (allUserIds.length > 0) {
             const { data: profiles } = await supabase
               .from("profiles")
               .select("user_id, name")
-              .in("user_id", userIds);
+              .in("user_id", allUserIds);
             (profiles || []).forEach((p: any) => {
               nameMap[p.user_id] = p.name || "Unknown";
             });
@@ -91,6 +92,7 @@ export function useGroceryBills() {
           return {
             id: bill.id,
             creatorId: bill.creator_id,
+            creatorName: nameMap[bill.creator_id] || "Unknown",
             title: bill.title,
             splitType: bill.split_type as "equal" | "itemized",
             createdAt: bill.created_at,
@@ -281,9 +283,46 @@ export function useGroceryBills() {
     }
   };
 
+  const leaveBill = async (billId: string) => {
+    if (!user) return;
+    try {
+      const bill = bills.find((b) => b.id === billId);
+      if (!bill) return;
+      if (bill.creatorId === user.id) {
+        toast({ title: "Can't leave", description: "You created this bill. Delete it instead.", variant: "destructive" });
+        return;
+      }
+
+      // Remove self from participants
+      const { error } = await supabase
+        .from("grocery_bill_participants")
+        .delete()
+        .eq("bill_id", billId)
+        .eq("user_id", user.id);
+      if (error) throw error;
+
+      // Recalculate amounts for remaining participants
+      const remaining = bill.participants.filter((p) => p.userId !== user.id);
+      if (remaining.length > 0 && bill.splitType === "equal") {
+        const perPerson = Math.round((bill.total / remaining.length) * 100) / 100;
+        for (const p of remaining) {
+          await supabase
+            .from("grocery_bill_participants")
+            .update({ amount_owed: perPerson })
+            .eq("id", p.id);
+        }
+      }
+
+      toast({ title: "Left bill", description: "You've left this bill." });
+      await fetchBills();
+    } catch (err: any) {
+      toast({ title: "Error leaving bill", description: err.message, variant: "destructive" });
+    }
+  };
+
   useEffect(() => {
     fetchBills();
   }, [fetchBills]);
 
-  return { bills, loading, createBill, markPaid, deleteBill, joinBill, refetch: fetchBills };
+  return { bills, loading, createBill, markPaid, deleteBill, joinBill, leaveBill, refetch: fetchBills };
 }
