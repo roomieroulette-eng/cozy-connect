@@ -420,6 +420,10 @@ export type Database = {
     }
     Functions: {
       check_mutual_like: { Args: { other_user_id: string }; Returns: boolean }
+      is_bill_participant: {
+        Args: { _bill_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
