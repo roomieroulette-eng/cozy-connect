@@ -92,6 +92,7 @@ export function useGroceryBills() {
           return {
             id: bill.id,
             creatorId: bill.creator_id,
+            creatorName: nameMap[bill.creator_id] || "Unknown",
             title: bill.title,
             splitType: bill.split_type as "equal" | "itemized",
             createdAt: bill.created_at,
