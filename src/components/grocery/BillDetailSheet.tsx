@@ -121,6 +121,19 @@ export function BillDetailSheet({ bill, currentUserId, onClose, onMarkPaid, onDe
             </div>
           </div>
 
+          {/* Join */}
+          {canJoin && (
+            <Button
+              className="w-full gap-2"
+              onClick={async () => {
+                await onJoin(bill.id);
+              }}
+            >
+              <Users size={14} />
+              Join This Bill
+            </Button>
+          )}
+
           {/* Delete */}
           {isCreator && (
             <AlertDialog>
