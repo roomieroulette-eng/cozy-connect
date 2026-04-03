@@ -23,6 +23,7 @@ export interface GroceryBillParticipant {
 export interface GroceryBill {
   id: string;
   creatorId: string;
+  creatorName: string;
   title: string;
   splitType: "equal" | "itemized";
   createdAt: string;
