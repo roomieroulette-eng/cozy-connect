@@ -109,6 +109,7 @@ export default function GroceryBills() {
         onClose={() => setSelectedBill(null)}
         onMarkPaid={markPaid}
         onDelete={deleteBill}
+        onJoin={joinBill}
       />
     </div>
   );
